@@ -8,7 +8,7 @@
         @dragover.prevent
         @mouseover="hover"
         @mouseleave="blur"
-        :class="[{'dropzone-wrapper--active': active}, localState? `dropzone-wrapper--${localState}` : '']"
+        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, localState? `dropzone-wrapper--${localState}` : '']"
         ref="dropzoneWrapper"
         @click.self="openSelectFile"
         id="dropzoneWrapper"
@@ -61,6 +61,10 @@
           </slot>
         </div>
       </template>
+
+      <div class="dropzone-wrapper__disabled" v-if="disabled">
+
+      </div>
     </div>
 
     <!--   Message   -->
@@ -245,9 +249,8 @@ const blur = () => {
   active.value = false
 }
 
+// Opens os selecting file window
 const openSelectFile = (e) => {
-  console.log(e.target.id)
-
   if (!props.disabled && e.target.id === 'dropzoneWrapper') {
     fileInput.value.click()
   } else {
@@ -317,6 +320,22 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   height: 200px;
   transition: .3s all ease;
   justify-content: space-between;
+  position: relative;
+
+  &--disabled {
+    opacity: 0.5;
+  }
+
+  &__disabled {
+    position: absolute;
+    top: -2px;
+    inset-inline-start: -2px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    border-radius: 12px;
+    background: transparent;
+    z-index: 2;
+  }
 
 
   &--active {
