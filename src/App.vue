@@ -2,7 +2,7 @@
   <div class="app">
     <Vue3Dropzone :accept="['jpg', 'jpeg', 'png']" multiple :max-file-size="100" v-model="files"
                   @update:modelValue="logUpdate"
-
+                  disabled
     />
   </div>
 </template>

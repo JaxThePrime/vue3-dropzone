@@ -61,11 +61,8 @@
           </slot>
         </div>
       </template>
-
-      <div class="dropzone-wrapper__disabled" v-if="disabled">
-
-      </div>
     </div>
+    <div class="dropzone-wrapper__disabled" @click.prevent @drop.prevent @dragover.prevent v-if="disabled"></div>
 
     <!--   Message   -->
     <Transition name="fade-in" mode="in-out">
@@ -303,6 +300,7 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   --v3-dropzone--overlay-opacity: 0.3;
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
+  position: relative;
 }
 
 .hidden {
@@ -320,7 +318,6 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   height: 200px;
   transition: .3s all ease;
   justify-content: space-between;
-  position: relative;
 
   &--disabled {
     opacity: 0.5;
