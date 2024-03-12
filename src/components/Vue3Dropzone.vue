@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <label
-        class="dropzone-wrapper" :for="id" :style="{width,height}"
+  <div class="dropzone">
+    <div
+        class="dropzone-wrapper" :style="{width,height}"
         @dragenter.prevent="toggleActive"
         @dragleave.prevent="toggleActive"
         @drop.prevent="drop"
@@ -10,6 +10,8 @@
         @mouseleave="blur"
         :class="[{'dropzone-wrapper--active': active}, localState? `dropzone-wrapper--${localState}` : '']"
         ref="dropzoneWrapper"
+        @click.self="openSelectFile"
+        id="dropzoneWrapper"
     >
       <!--   Input   -->
       <input type="file" ref="fileInput" class="hidden" :id="id" :accept="accept" @input="inputFiles"
@@ -18,9 +20,7 @@
       <!--   Placeholder content   -->
       <template v-if="!previewUrls.length">
         <slot name="placeholder-img">
-          <div class="image-placeholder">
-            <img src="/image-placeholder.svg" alt="image-placeholder">
-          </div>
+          <img src="/image-placeholder.svg" alt="image-placeholder">
         </slot>
         <slot name="title">
           <div class="titles">
@@ -41,12 +41,10 @@
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses">
           <slot name="preview" v-for="img in previewUrls" :img="img">
-            <div v-for="img in previewUrls" class="preview" :class="{'preview--multiple': multiple}">
-              <img :src="img.src" :alt="img.name"
-                   :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <div class="img-details"
-                   :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}"
-              >
+            <div v-for="img in previewUrls" class="preview" :class="{'preview--multiple': multiple}"
+                 :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
+              <img :src="img.src" :alt="img.name">
+              <div class="img-details">
                 <button class="img-remove" @click="removeImg(img)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -63,7 +61,7 @@
           </slot>
         </div>
       </template>
-    </label>
+    </div>
 
     <!--   Message   -->
     <Transition name="fade-in" mode="in-out">
@@ -247,6 +245,16 @@ const blur = () => {
   active.value = false
 }
 
+const openSelectFile = (e) => {
+  console.log(e.target.id)
+
+  if (!props.disabled && e.target.id === 'dropzoneWrapper') {
+    fileInput.value.click()
+  } else {
+    e.preventDefault()
+  }
+}
+
 // Click outside blur for clearing error state
 const useDetectOutsideClick = (component, callback) => {
   if (!component) return
@@ -276,6 +284,24 @@ useDetectOutsideClick(dropzoneWrapper, () => {
 </script>
 
 <style scoped lang="scss">
+* {
+  font-family: sans-serif;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.dropzone {
+  --v3-dropzone--primary: 94, 112, 210;
+  --v3-dropzone--border: #D6D8DC;
+  --v3-dropzone--description: #bebfc3;
+  --v3-dropzone--overlay: 40, 44, 53;
+  --v3-dropzone--overlay-opacity: 0.3;
+  --v3-dropzone--error: 255, 76, 81;
+  --v3-dropzone--success: 36, 179, 100;
+}
+
 .hidden {
   display: none;
 }
@@ -291,6 +317,7 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   height: 200px;
   transition: .3s all ease;
   justify-content: space-between;
+
 
   &--active {
     border-color: rgba(var(--v3-dropzone--primary));
@@ -341,6 +368,7 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   width: 100%;
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -377,15 +405,14 @@ useDetectOutsideClick(dropzoneWrapper, () => {
 
 .img-details {
   position: absolute;
+  top: 0;
+  inset-inline-start: 0;
   width: 100%;
   height: 100%;
-  inset-inline-start: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(var(--v3-dropzone--overlay), var(--v3-dropzone-overlay--opacity));
+  background: rgba(var(--v3-dropzone--overlay), var(--v3-dropzone--overlay-opacity));
   border-radius: 8px;
   transition: all 0.2s linear;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(7px);
   filter: grayscale(1%);
   opacity: 0;
   visibility: hidden;
@@ -393,13 +420,14 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 
   h2 {
     font-size: 14px;
     font-weight: 400;
     text-align: center;
     color: white;
-    max-width: 300px;
+    max-width: 40%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -427,8 +455,8 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
   transition: all .2s linear;
 
   &:active {
@@ -457,11 +485,6 @@ useDetectOutsideClick(dropzoneWrapper, () => {
   }
 }
 
-.image-placeholder {
-  background: rgba(var(--v3-dropzone--overlay), .01);
-  padding: 5px;
-  border-radius: 8px;
-}
 
 .fade-in-enter-from {
   opacity: 0;

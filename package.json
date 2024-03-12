@@ -6,13 +6,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/Dropzone.umd.js",
-  "module": "./dist/Dropzone.es.js",
+  "main": "./dist/Vue3Dropzone.umd.js",
+  "module": "./dist/Vue3Dropzone.es.js",
   "exports": {
     ".": {
-      "import": "./dist/Dropzone.es.js",
-      "require": "./dist/Dropzone.umd.js"
-    }
+      "import": "./dist/Vue3Dropzone.es.js",
+      "require": "./dist/Vue3Dropzone.umd.js"
+    },
+    "./dist/style.css": "./dist/style.css"
   },
   "scripts": {
     "dev": "vite",
@@ -26,5 +27,11 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "sass": "^1.71.1",
     "vite": "^5.1.4"
-  }
+  },
+  "peerDependencies": {
+    "vue": "^3.4.19"
+  },
+  "bundledDependencies": [
+    "sass"
+  ]
 }

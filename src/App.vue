@@ -1,7 +1,8 @@
 <template>
   <div class="app">
     <Vue3Dropzone :accept="['jpg', 'jpeg', 'png']" multiple :max-file-size="100" v-model="files"
-                  @update:modelValue="logUpdate"/>
+                  @update:modelValue="logUpdate"
+    />
   </div>
 </template>
 
