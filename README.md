@@ -23,13 +23,13 @@ the features of this package include the following:
 - Install Yarn package
 
 ```bash
-yarn add vue3-dropzone
+yarn add @jaxtheprime/vue3-dropzone
 ```
 
 - Install NPM package
 
 ```bash
-npm install vue3-dropzone
+npm install @jaxtheprime/vue3-dropzone
 ```
 
 ## Usage
@@ -42,8 +42,8 @@ Local registration:
 </template>
 
 <script>
-    import Vue3Dropzone from "vue3-dropzone";
-    import 'vue3-dropzone/dist/style.css'
+    import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
+    import '@jaxtheprime/vue3-dropzone/dist/style.css'
 
     const files = ref([])
     };
