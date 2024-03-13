@@ -41,10 +41,10 @@
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses">
           <slot name="preview" v-for="img in previewUrls" :img="img">
-            <div v-for="img in previewUrls" class="preview" :class="{'preview--multiple': multiple}"
+            <div class="preview" :class="{'preview--multiple': multiple}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
               <img :src="img.src" :alt="img.name">
-              <div class="img-details">
+              <div class="img-details" v-if="img.name || img.size">
                 <button class="img-remove" @click="removeImg(img)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -62,7 +62,8 @@
         </div>
       </template>
     </div>
-    <div class="dropzone-wrapper__disabled" @click.prevent @drop.prevent @dragover.prevent v-if="disabled"></div>
+    <div class="dropzone-wrapper__disabled" @click.prevent @drop.prevent @dragover.prevent
+         v-if="disabled"></div>
 
     <!--   Message   -->
     <Transition name="fade-in" mode="in-out">
@@ -73,7 +74,7 @@
 </template>
 
 <script setup>
-import {computed, onBeforeUnmount, onMounted, ref, watch} from "vue";
+import {computed, onBeforeUnmount, onMounted, ref, watchEffect} from "vue";
 
 const props = defineProps({
   modelValue: {
@@ -104,10 +105,6 @@ const props = defineProps({
     validator(value) {
       return ["error", "success", 'warning', 'indeterminate'].includes(value);
     },
-  },
-  acceptedFiles: {
-    type: Array,
-    default: ["png", "jpg", "jpeg"]
   },
   accept: {
     type: Array,
@@ -150,34 +147,6 @@ const id = computed(() => {
   return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
 })
 
-// Updates local preview state on previews prop change
-watch(() => props.previews, (val) => {
-  if (val.length) {
-    previewUrls.value = val
-  }
-})
-
-// Updates local message state on message prop change
-watch(() => props.message, (val) => {
-  if (val.length) {
-    localMessageState.value = val
-  }
-})
-
-// Updates local state on state prop change
-watch(() => props.state, (val) => {
-  if (val) {
-    localState.value = val
-  }
-})
-
-watch(() => files.value, (val) => {
-  if (val.length) {
-    emit('update:modelValue', val)
-  }
-})
-
-
 // Manages input files
 const inputFiles = (e) => {
   const allFiles = [...e.target.files].slice(0, props.maxFiles);
@@ -215,19 +184,23 @@ const inputFiles = (e) => {
 
 // Toggles active state for dropping files(styles)
 const toggleActive = () => {
-  active.value = !active.value
+  if (!props.disabled && props.mode !== 'preview') {
+    active.value = !active.value
+  }
 }
 
 // Handles dropped files and input them
 const drop = (e) => {
   toggleActive()
-  const files = {
-    target: {
-      files: [...e.dataTransfer.files]
+  if (!props.disabled && props.mode !== 'preview') {
+    const files = {
+      target: {
+        files: [...e.dataTransfer.files]
+      }
     }
+    emit('drop', e)
+    inputFiles(files)
   }
-  emit('drop', e)
-  inputFiles(files)
 }
 
 // Removes img from files list
@@ -248,7 +221,7 @@ const blur = () => {
 
 // Opens os selecting file window
 const openSelectFile = (e) => {
-  if (!props.disabled && e.target.id === 'dropzoneWrapper') {
+  if (!props.disabled && props.mode === 'drop' && e.target.id === 'dropzoneWrapper') {
     fileInput.value.click()
   } else {
     e.preventDefault()
@@ -281,6 +254,39 @@ useDetectOutsideClick(dropzoneWrapper, () => {
     localMessageState.value = ''
   }
 })
+
+// Updates local preview state on previews prop change
+watchEffect(() => {
+  if (props.previews && props.previews.length) {
+    previewUrls.value = props.previews.map(item => {
+      return {
+        src: item,
+        id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+      }
+    })
+  }
+})
+
+// Updates local message state on message prop change
+watchEffect(() => {
+  if (props.message) {
+    localMessageState.value = props.message
+  }
+})
+
+// Updates local state on state prop change
+watchEffect(() => {
+  if (props.state) {
+    localState.value = props.state
+  }
+})
+
+watchEffect(() => {
+  if (files.value && files.value.length) {
+    emit('update:modelValue', files.value)
+  }
+})
+
 </script>
 
 <style scoped lang="scss">
@@ -394,7 +400,7 @@ useDetectOutsideClick(dropzoneWrapper, () => {
 
 .preview {
   width: 100%;
-  height: 100%;
+  height: 95%;
   border-radius: 8px;
   flex-shrink: 0;
   position: relative;
