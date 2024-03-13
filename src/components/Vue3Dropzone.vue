@@ -300,8 +300,8 @@ watchEffect(() => {
 
 .dropzone {
   --v3-dropzone--primary: 94, 112, 210;
-  --v3-dropzone--border: #D6D8DC;
-  --v3-dropzone--description: #bebfc3;
+  --v3-dropzone--border: 214, 216, 220;
+  --v3-dropzone--description: 190, 191, 195;
   --v3-dropzone--overlay: 40, 44, 53;
   --v3-dropzone--overlay-opacity: 0.3;
   --v3-dropzone--error: 255, 76, 81;
@@ -314,7 +314,7 @@ watchEffect(() => {
 }
 
 .dropzone-wrapper {
-  border: 2px dashed var(--v3-dropzone--border);
+  border: 2px dashed rgba(var(--v3-dropzone--border));
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -369,7 +369,7 @@ watchEffect(() => {
 
 .description {
   font-size: 12px;
-  color: var(--v3-dropzone--description);
+  color: rgba(var(--v3-dropzone--description));
 }
 
 .titles {

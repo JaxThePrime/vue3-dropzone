@@ -73,15 +73,15 @@ Local registration:
 
 ## Css variables
 
-| Name                             | Value          |    
-|----------------------------------|----------------|
-| `--v3-dropzone--primary`         | `94, 112, 210` |
-| `--v3-dropzone--border`          | `#D6D8DC`      |
-| `--v3-dropzone--description`     | `#bebfc3`      |
-| `--v3-dropzone--overlay`         | `40, 44, 53`   |
-| `--v3-dropzone--overlay-opacity` | `0.3`          |
-| `--v3-dropzone--error`           | `255, 76, 81`  |
-| `--v3-dropzone--success`         | `36, 179, 100` |
+| Name                             | Value           |    
+|----------------------------------|-----------------|
+| `--v3-dropzone--primary`         | `94, 112, 210`  |
+| `--v3-dropzone--border`          | `214, 216, 220` |
+| `--v3-dropzone--description`     | `190, 191, 195` |
+| `--v3-dropzone--overlay`         | `40, 44, 53`    |
+| `--v3-dropzone--overlay-opacity` | `0.3`           |
+| `--v3-dropzone--error`           | `255, 76, 81`   |
+| `--v3-dropzone--success`         | `36, 179, 100`  |
 
 ## Contact
 
