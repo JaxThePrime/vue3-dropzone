@@ -373,6 +373,7 @@ watchEffect(() => {
   color: white;
   cursor: pointer;
   margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .description {
