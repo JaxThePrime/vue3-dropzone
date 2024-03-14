@@ -35,7 +35,7 @@
             <h1 class="m-0">Drop your files here</h1>
           </div>
         </slot>
-        <slot name="button">
+        <slot name="button" :fileInput="fileInput">
           <button @click="fileInput?.click()" v-if="showSelectButton" class="select-file">Select File</button>
         </slot>
         <slot name="description">
@@ -48,7 +48,7 @@
       <!--   Images previews   -->
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses">
-          <slot name="preview" v-for="img in previewUrls" :img="img">
+          <slot name="preview" v-for="img in previewUrls" :data="img">
             <div class="preview" :class="{'preview--multiple': multiple}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
               <img :src="img.src" :alt="img.name">

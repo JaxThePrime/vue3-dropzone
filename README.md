@@ -83,6 +83,16 @@ Local registration:
 | `--v3-dropzone--error`           | `255, 76, 81`   |
 | `--v3-dropzone--success`         | `36, 179, 100`  |
 
+## Slots
+
+| Name              | data        |    
+|-------------------|-------------|
+| `button`          | `fileInput` |
+| `preview`         | `data`      |
+| `description`     | `undefined` |
+| `placeholder-img` | `undefined` |
+| `title`           | `undefined` |
+
 ## Contact
 
 Emad Moghimi [jaxtheprime@gmail.com](jaxtheprime@gmail.com)
