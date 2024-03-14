@@ -1,8 +1,6 @@
 <template>
   <div class="app">
-    <Vue3Dropzone v-model="files">
-      <template #></template>
-    </Vue3Dropzone>
+    <Vue3Dropzone v-model="files" >    </Vue3Dropzone>
   </div>
 </template>
 

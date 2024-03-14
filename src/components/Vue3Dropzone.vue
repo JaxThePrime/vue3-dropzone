@@ -40,8 +40,7 @@
         </slot>
         <slot name="description">
           <p class="m-0 description">
-            Files must be under {{ maxFileSize }}MB and in {{ accept.length ? accept.join(', ') : '' }}
-            formats</p>
+            Files must be under {{ maxFileSize }}MB {{ accept.length ? `and in ${accept.join(', ')} formats` : '' }}</p>
         </slot>
       </template>
 
@@ -331,7 +330,7 @@ watchEffect(() => {
   width: 400px;
   height: 200px;
   transition: .3s all ease;
-  justify-content: space-between;
+  justify-content: center;
 
   &--disabled {
     opacity: 0.5;
