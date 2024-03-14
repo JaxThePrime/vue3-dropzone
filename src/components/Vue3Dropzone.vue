@@ -314,6 +314,8 @@ watchEffect(() => {
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .hidden {
@@ -327,7 +329,7 @@ watchEffect(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 400px;
+  width: auto;
   height: 200px;
   transition: .3s all ease;
   justify-content: center;
