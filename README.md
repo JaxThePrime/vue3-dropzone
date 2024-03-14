@@ -14,7 +14,7 @@
 
 the features of this package include the following:
 
-- Highly customize
+- Highly customizable
 - Lightweight, powerful and easy to use <g-emoji class="g-emoji" alias="smile"
 - Provides with image preview, multiple state like error success and disable, etc...
 
@@ -71,6 +71,18 @@ Local registration:
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
 | `message`               | `String`          | undefined | Message under the dropzone area                                       |
 
+
+## Slots
+
+| Name              | data        |    
+|-------------------|-------------|
+| `button`          | `fileInput` |
+| `preview`         | `data`      |
+| `description`     | `undefined` |
+| `placeholder-img` | `undefined` |
+| `title`           | `undefined` |
+
+
 ## Css variables
 
 | Name                             | Value           |    
@@ -83,15 +95,6 @@ Local registration:
 | `--v3-dropzone--error`           | `255, 76, 81`   |
 | `--v3-dropzone--success`         | `36, 179, 100`  |
 
-## Slots
-
-| Name              | data        |    
-|-------------------|-------------|
-| `button`          | `fileInput` |
-| `preview`         | `data`      |
-| `description`     | `undefined` |
-| `placeholder-img` | `undefined` |
-| `title`           | `undefined` |
 
 ## Contact
 
