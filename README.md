@@ -6,7 +6,7 @@
     Customizable easy to use dropzone | <strong>Only supported for vue3</strong>
     <br>
     <br>
-    <a href=""><strong>Demo</strong></a>
+    <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
   </p>
 </div>
 
