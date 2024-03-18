@@ -48,10 +48,11 @@
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses">
           <slot name="preview" v-for="img in previewUrls" :data="img">
-            <div class="preview" :class="{'preview__multiple': multiple, 'preview__file': !img.type.includes('image/')}"
+            <div class="preview"
+                 :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/')}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="img.src" :alt="img.name" v-if="img.type.includes('image/')">
-              <Icon :name="img.name.split('.').pop()"/>
+              <img :src="img.src" :alt="img.name" v-if="img && img.type && img.type.includes('image/')">
+              <Icon :name="img.name.split('.').pop()" v-if="img && img.type && !img.type.includes('image/')"/>
               <div class="img-details" v-if="img.name || img.size">
                 <button class="img-remove" @click="removeImg(img)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
