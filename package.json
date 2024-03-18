@@ -2,7 +2,7 @@
   "name": "@jaxtheprime/vue3-dropzone",
   "description": "Vue simple dropzone",
   "private": false,
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Emad Moghimi <jaxtheprime@gmail.com>",
   "license": "MIT",
   "type": "module",
@@ -41,13 +41,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "sass": "^1.71.1",
     "vite": "^5.1.4"
   },
   "peerDependencies": {
     "vue": "^3.4.19"
-  },
-  "bundledDependencies": [
-    "sass"
-  ]
+  }
 }

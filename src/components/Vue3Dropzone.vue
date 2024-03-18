@@ -48,9 +48,10 @@
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses">
           <slot name="preview" v-for="img in previewUrls" :data="img">
-            <div class="preview" :class="{'preview--multiple': multiple}"
+            <div class="preview" :class="{'preview__multiple': multiple, 'preview__file': !img.type.includes('image/')}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="img.src" :alt="img.name">
+              <img :src="img.src" :alt="img.name" v-if="img.type.includes('image/')">
+              <Icon :name="img.name.split('.').pop()"/>
               <div class="img-details" v-if="img.name || img.size">
                 <button class="img-remove" @click="removeImg(img)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -82,6 +83,7 @@
 
 <script setup>
 import {computed, onBeforeUnmount, onMounted, ref, watchEffect} from "vue";
+import Icon from "./Icon.vue";
 
 const props = defineProps({
   modelValue: {
@@ -296,13 +298,13 @@ watchEffect(() => {
 
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 * {
-  font-family: sans-serif;
+  font-family: sans-serif
 }
 
 .m-0 {
-  margin: 0;
+  margin: 0
 }
 
 .dropzone {
@@ -310,16 +312,16 @@ watchEffect(() => {
   --v3-dropzone--border: 214, 216, 220;
   --v3-dropzone--description: 190, 191, 195;
   --v3-dropzone--overlay: 40, 44, 53;
-  --v3-dropzone--overlay-opacity: 0.3;
+  --v3-dropzone--overlay-opacity: .3;
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: column
 }
 
 .hidden {
-  display: none;
+  display: none
 }
 
 .dropzone-wrapper {
@@ -332,36 +334,35 @@ watchEffect(() => {
   width: auto;
   height: 200px;
   transition: .3s all ease;
-  justify-content: center;
+  justify-content: center
+}
 
-  &--disabled {
-    opacity: 0.5;
-  }
+.dropzone-wrapper--disabled {
+  opacity: .5
+}
 
-  &__disabled {
-    position: absolute;
-    top: -2px;
-    inset-inline-start: -2px;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    border-radius: 12px;
-    background: transparent;
-    z-index: 2;
-  }
+.dropzone-wrapper__disabled {
+  position: absolute;
+  top: -2px;
+  inset-inline-start: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  border-radius: 12px;
+  background: transparent;
+  z-index: 2
+}
 
+.dropzone-wrapper--active {
+  border-color: rgba(var(--v3-dropzone--primary));
+  background: rgba(var(--v3-dropzone--primary), .1)
+}
 
-  &--active {
-    border-color: rgba(var(--v3-dropzone--primary));
-    background: rgba(var(--v3-dropzone--primary), 0.1);
-  }
+.dropzone-wrapper--error {
+  border-color: rgba(var(--v3-dropzone--error)) !important
+}
 
-  &--error {
-    border-color: rgba(var(--v3-dropzone--error)) !important;
-  }
-
-  &--success {
-    border-color: rgba(var(--v3-dropzone--success)) !important;
-  }
+.dropzone-wrapper--success {
+  border-color: rgba(var(--v3-dropzone--success)) !important
 }
 
 .select-file {
@@ -371,29 +372,29 @@ watchEffect(() => {
   font-size: 12px;
   border: none;
   padding: 10px 20px;
-  color: white;
+  color: #fff;
   cursor: pointer;
   margin-bottom: 10px;
-  margin-top: 10px;
+  margin-top: 10px
 }
 
 .description {
   font-size: 12px;
-  color: rgba(var(--v3-dropzone--description));
+  color: rgba(var(--v3-dropzone--description))
 }
 
 .titles {
-  text-align: center;
+  text-align: center
+}
 
-  h1 {
-    font-weight: 400;
-    font-size: 20px;
-  }
+.titles h1 {
+  font-weight: 400;
+  font-size: 20px
+}
 
-  h3 {
-    margin-top: 30px;
-    font-weight: 400;
-  }
+.titles h3 {
+  margin-top: 30px;
+  font-weight: 400
 }
 
 .preview-container {
@@ -405,7 +406,7 @@ watchEffect(() => {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 40px
 }
 
 .preview {
@@ -414,25 +415,29 @@ watchEffect(() => {
   border-radius: 8px;
   flex-shrink: 0;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  &--multiple {
-    height: 90% !important;
-    width: 90% !important;
-  }
+.preview__multiple {
+  height: 90% !important;
+  width: 90% !important
+}
 
-  &:hover {
-    .img-details {
-      opacity: 1 !important;
-      visibility: visible !important;
-    }
-  }
+.preview__file {
+  border: 1px dashed rgba(var(--v3-dropzone--primary));
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-  }
+.preview:hover .img-details {
+  opacity: 1 !important;
+  visibility: visible !important
+}
 
+.preview img {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px
 }
 
 .img-details {
@@ -443,7 +448,8 @@ watchEffect(() => {
   height: 100%;
   background: rgba(var(--v3-dropzone--overlay), var(--v3-dropzone--overlay-opacity));
   border-radius: 8px;
-  transition: all 0.2s linear;
+  transition: all .2s linear;
+  -webkit-backdrop-filter: blur(7px);
   backdrop-filter: blur(7px);
   filter: grayscale(1%);
   opacity: 0;
@@ -452,28 +458,31 @@ watchEffect(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden
+}
+
+.img-details h2 {
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+  color: #fff;
+  max-width: 40%;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
 
-  h2 {
-    font-size: 14px;
-    font-weight: 400;
-    text-align: center;
-    color: white;
-    max-width: 40%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    @media (max-width: 400px) {
-      max-width: 200px;
-    }
+@media (max-width: 400px) {
+  .img-details h2 {
+    max-width: 200px
   }
+}
 
-  span {
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    color: white;
-  }
+.img-details span {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff
 }
 
 .img-remove {
@@ -481,7 +490,7 @@ watchEffect(() => {
   border-radius: 10px;
   border: none;
   padding: 5px;
-  color: white;
+  color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -489,15 +498,15 @@ watchEffect(() => {
   position: absolute;
   top: 10px;
   right: 10px;
-  transition: all .2s linear;
+  transition: all .2s linear
+}
 
-  &:active {
-    transform: scale(0.9);
-  }
+.img-remove:active {
+  transform: scale(.9)
+}
 
-  &:hover {
-    background: rgba(var(--v3-dropzone--error), .8);
-  }
+.img-remove:hover {
+  background: rgba(var(--v3-dropzone--error), .8)
 }
 
 .message {
@@ -505,29 +514,22 @@ watchEffect(() => {
   font-weight: 400;
   font-size: 14px;
   color: var(--v3-dropzone--overlay);
-  transition: all 0.2s linear;
-
-
-  &--error {
-    color: rgba(var(--v3-dropzone--error)) !important;
-  }
-
-  &--success {
-    color: rgba(var(--v3-dropzone--success)) !important;
-  }
+  transition: all .2s linear
 }
 
-
-.fade-in-enter-from {
-  opacity: 0;
+.message--error {
+  color: rgba(var(--v3-dropzone--error)) !important
 }
 
-.fade-in-leave-to {
-  opacity: 0;
+.message--success {
+  color: rgba(var(--v3-dropzone--success)) !important
 }
 
-.fade-in-enter-active,
-.fade-in-leave-active {
-  transition: all 0.2s linear;
+.fade-in-enter-from, .fade-in-leave-to {
+  opacity: 0
+}
+
+.fade-in-enter-active, .fade-in-leave-active {
+  transition: all .2s linear
 }
 </style>
