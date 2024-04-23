@@ -301,11 +301,11 @@ watchEffect(() => {
 
 <style scoped>
 * {
-  font-family: sans-serif
+  font-family: sans-serif;
 }
 
 .m-0 {
-  margin: 0
+  margin: 0;
 }
 
 .dropzone {
@@ -318,11 +318,11 @@ watchEffect(() => {
   --v3-dropzone--success: 36, 179, 100;
   position: relative;
   display: flex;
-  flex-direction: column
+  flex-direction: column;
 }
 
 .hidden {
-  display: none
+  display: none;
 }
 
 .dropzone-wrapper {
@@ -335,11 +335,11 @@ watchEffect(() => {
   width: auto;
   height: 200px;
   transition: .3s all ease;
-  justify-content: center
+  justify-content: center;
 }
 
 .dropzone-wrapper--disabled {
-  opacity: .5
+  opacity: .5;
 }
 
 .dropzone-wrapper__disabled {
@@ -350,20 +350,20 @@ watchEffect(() => {
   height: calc(100% + 4px);
   border-radius: 12px;
   background: transparent;
-  z-index: 2
+  z-index: 2;
 }
 
 .dropzone-wrapper--active {
-  border-color: rgba(var(--v3-dropzone--primary));
-  background: rgba(var(--v3-dropzone--primary), .1)
+  border-color: rgba(var(--v3-dropzone--primary)) !important;
+  background: rgba(var(--v3-dropzone--primary), .1) !important;
 }
 
 .dropzone-wrapper--error {
-  border-color: rgba(var(--v3-dropzone--error)) !important
+  border-color: rgba(var(--v3-dropzone--error)) !important;
 }
 
 .dropzone-wrapper--success {
-  border-color: rgba(var(--v3-dropzone--success)) !important
+  border-color: rgba(var(--v3-dropzone--success)) !important;
 }
 
 .select-file {
@@ -376,26 +376,26 @@ watchEffect(() => {
   color: #fff;
   cursor: pointer;
   margin-bottom: 10px;
-  margin-top: 10px
+  margin-top: 10px;
 }
 
 .description {
   font-size: 12px;
-  color: rgba(var(--v3-dropzone--description))
+  color: rgba(var(--v3-dropzone--description));
 }
 
 .titles {
-  text-align: center
+  text-align: center;
 }
 
 .titles h1 {
   font-weight: 400;
-  font-size: 20px
+  font-size: 20px;
 }
 
 .titles h3 {
   margin-top: 30px;
-  font-weight: 400
+  font-weight: 400;
 }
 
 .preview-container {
@@ -407,7 +407,7 @@ watchEffect(() => {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 40px
+  gap: 40px;
 }
 
 .preview {
@@ -423,7 +423,7 @@ watchEffect(() => {
 
 .preview__multiple {
   height: 90% !important;
-  width: 90% !important
+  width: 90% !important;
 }
 
 .preview__file {
@@ -432,13 +432,13 @@ watchEffect(() => {
 
 .preview:hover .img-details {
   opacity: 1 !important;
-  visibility: visible !important
+  visibility: visible !important;
 }
 
 .preview img {
   width: 100%;
   height: 100%;
-  border-radius: 8px
+  border-radius: 8px;
 }
 
 .img-details {
@@ -459,7 +459,7 @@ watchEffect(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden
+  overflow: hidden;
 }
 
 .img-details h2 {
@@ -470,12 +470,12 @@ watchEffect(() => {
   max-width: 40%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap
+  white-space: nowrap;
 }
 
 @media (max-width: 400px) {
   .img-details h2 {
-    max-width: 200px
+    max-width: 200px;
   }
 }
 
@@ -483,7 +483,7 @@ watchEffect(() => {
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  color: #fff
+  color: #fff;
 }
 
 .img-remove {
@@ -499,15 +499,15 @@ watchEffect(() => {
   position: absolute;
   top: 10px;
   right: 10px;
-  transition: all .2s linear
+  transition: all .2s linear;
 }
 
 .img-remove:active {
-  transform: scale(.9)
+  transform: scale(.9);
 }
 
 .img-remove:hover {
-  background: rgba(var(--v3-dropzone--error), .8)
+  background: rgba(var(--v3-dropzone--error), .8);
 }
 
 .message {
@@ -515,22 +515,22 @@ watchEffect(() => {
   font-weight: 400;
   font-size: 14px;
   color: var(--v3-dropzone--overlay);
-  transition: all .2s linear
+  transition: all .2s linear;
 }
 
 .message--error {
-  color: rgba(var(--v3-dropzone--error)) !important
+  color: rgba(var(--v3-dropzone--error)) !important;
 }
 
 .message--success {
-  color: rgba(var(--v3-dropzone--success)) !important
+  color: rgba(var(--v3-dropzone--success)) !important;
 }
 
 .fade-in-enter-from, .fade-in-leave-to {
-  opacity: 0
+  opacity: 0;
 }
 
 .fade-in-enter-active, .fade-in-leave-active {
-  transition: all .2s linear
+  transition: all .2s linear;
 }
 </style>
