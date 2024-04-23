@@ -1,5 +1,6 @@
 <template>
   <div class="app">
+    {{files}}
     <Vue3Dropzone multiple v-model="files">
     </Vue3Dropzone>
   </div>

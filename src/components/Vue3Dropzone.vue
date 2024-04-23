@@ -217,6 +217,7 @@ const drop = (e) => {
 const removeImg = (item) => {
   previewUrls.value = previewUrls.value.filter(url => url.id !== item.id)
   files.value = files.value.filter(file => file.id !== item.id)
+  emit('update:modelValue', files.value)
 }
 
 // Hover and blur manager
