@@ -69,8 +69,8 @@ Local registration:
 | `previewWrapperClasses` | `String`          | undefined | Preview images container classes                                      |
 | `blurOnClickOutside`    | `Boolean`         | true      | Removes state on click outside                                        |
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
+| `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
 | `message`               | `String`          | undefined | Message under the dropzone area                                       |
-
 
 ## Slots
 
@@ -81,7 +81,6 @@ Local registration:
 | `description`     | `undefined` |
 | `placeholder-img` | `undefined` |
 | `title`           | `undefined` |
-
 
 ## Css variables
 
@@ -94,7 +93,6 @@ Local registration:
 | `--v3-dropzone--overlay-opacity` | `0.3`           |
 | `--v3-dropzone--error`           | `255, 76, 81`   |
 | `--v3-dropzone--success`         | `36, 179, 100`  |
-
 
 ## Contact
 
