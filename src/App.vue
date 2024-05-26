@@ -1,7 +1,6 @@
 <template>
-  <div class="app">
-    {{files}}
-    <Vue3Dropzone multiple v-model="files">
+  <div class="app" style="width: 478px; height: 200px">
+    <Vue3Dropzone :accept="['video/mp4']" multiple select-file-strategy="merge" v-model="files">
     </Vue3Dropzone>
   </div>
 </template>

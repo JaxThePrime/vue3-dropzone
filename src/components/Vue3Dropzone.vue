@@ -49,9 +49,12 @@
         <div class="preview-container" :class="previewWrapperClasses">
           <slot name="preview" v-for="img in previewUrls" :data="img">
             <div class="preview"
-                 :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/')}"
+                 :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/') && img && img.type && !img.type.includes('video/')}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
               <img :src="img.src" :alt="img.name" v-if="img && img.type && img.type.includes('image/')">
+              <video style="height: 100%; width: 100%" v-if="img && img.type && img.type.includes('video/')">
+                <source :src="img.src">
+              </video>
               <Icon :name="img.name.split('.').pop()" v-if="img && img.type && !img.type.includes('image/')"/>
               <div class="img-details" v-if="img.name || img.size">
                 <button class="img-remove" @click="removeImg(img)">
@@ -141,6 +144,10 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  selectFileStrategy: {
+    type: String,
+    default: 'replace'
+  },
   message: String
 })
 const emit = defineEmits(['drop', 'update:modelValue'])
@@ -166,12 +173,24 @@ const inputFiles = (e) => {
   })
 
   if (filesAreValid.every(item => item === true)) {
-    files.value = allFiles.map(item => {
-      return {
-        file: item,
-        id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
-      }
-    })
+    if (props.selectFileStrategy === 'replace') {
+      files.value = allFiles.map(item => {
+        return {
+          file: item,
+          id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+        }
+      })
+    }
+    if (props.selectFileStrategy === 'merge') {
+      files.value = [...files.value, ...allFiles.map(item => {
+        return {
+          file: item,
+          id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+        }
+      })]
+      console.log(files.value)
+    }
+
   } else {
     localState.value = 'error'
     localMessageState.value = props.multiple ? `Files are too large, maximum file size is ${props.maxFileSize}MB`
@@ -297,7 +316,6 @@ watchEffect(() => {
     emit('update:modelValue', files.value)
   }
 })
-
 </script>
 
 <style scoped>
