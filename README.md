@@ -71,6 +71,7 @@ Local registration:
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
 | `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
 | `message`               | `String`          | undefined | Message under the dropzone area                                       |
+| `errorMessage`          | `String`          | undefined | Message under the dropzone area for error state                       |
 
 ## Slots
 

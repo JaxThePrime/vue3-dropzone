@@ -8,7 +8,7 @@
         @dragover.prevent
         @mouseover="hover"
         @mouseleave="blur"
-        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, localState? `dropzone-wrapper--${localState}` : '']"
+        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, localState ? `dropzone-wrapper--${localState}` : '']"
         ref="dropzoneWrapper"
         @click.self="openSelectFile"
         id="dropzoneWrapper"
@@ -79,8 +79,10 @@
 
     <!--   Message   -->
     <Transition name="fade-in" mode="in-out">
-      <p class="m-0 message" :class="localState? `message--${localState}` : ''" v-if="localMessageState">
-        {{ localMessageState }}</p>
+      <p class="m-0 message" :class="localState ? `message--${localState}` : ''"
+         v-if="localMessageState || localState === 'error' || localState === 'indeterminate'">
+        {{ localState === 'error' ? errorMessage : localMessageState }}
+      </p>
     </Transition>
   </div>
 </template>
@@ -148,7 +150,8 @@ const props = defineProps({
     type: String,
     default: 'replace'
   },
-  message: String
+  message: String,
+  errorMessage: String
 })
 const emit = defineEmits(['drop', 'update:modelValue'])
 
@@ -188,13 +191,15 @@ const inputFiles = (e) => {
           id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
         }
       })]
-      console.log(files.value)
     }
 
   } else {
     localState.value = 'error'
-    localMessageState.value = props.multiple ? `Files are too large, maximum file size is ${props.maxFileSize}MB`
-        : `File is too large, maximum file size is ${props.maxFileSize}MB`
+    if (!props.errorMessage) {
+      localMessageState.value = props.multiple ? `Files are too large, maximum file size is ${props.maxFileSize}MB`
+          : `File is too large, maximum file size is ${props.maxFileSize}MB`
+    }
+
   }
 
   const generatedUrls = []
@@ -281,7 +286,6 @@ const useDetectOutsideClick = (component, callback) => {
 useDetectOutsideClick(dropzoneWrapper, () => {
   if (props.blurOnClickOutside) {
     localState.value = 'indeterminate'
-    localMessageState.value = ''
   }
 })
 
@@ -316,6 +320,7 @@ watchEffect(() => {
     emit('update:modelValue', files.value)
   }
 })
+
 </script>
 
 <style scoped>
@@ -335,6 +340,7 @@ watchEffect(() => {
   --v3-dropzone--overlay-opacity: .3;
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
+  --v3-dropzone--warning: 240, 207, 31;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -383,6 +389,10 @@ watchEffect(() => {
 
 .dropzone-wrapper--success {
   border-color: rgba(var(--v3-dropzone--success)) !important;
+}
+
+.dropzone-wrapper--warning {
+  border-color: rgba(var(--v3-dropzone--warning)) !important;
 }
 
 .select-file {
@@ -543,6 +553,10 @@ watchEffect(() => {
 
 .message--success {
   color: rgba(var(--v3-dropzone--success)) !important;
+}
+
+.message--warning {
+  color: rgba(var(--v3-dropzone--warning)) !important;
 }
 
 .fade-in-enter-from, .fade-in-leave-to {
