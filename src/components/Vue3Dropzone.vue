@@ -7,8 +7,8 @@
         @drop.prevent="drop"
         @dragover.prevent
         @mouseover="hover"
-        @mouseleave="blur"
-        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, localState ? `dropzone-wrapper--${localState}` : '']"
+        @mouseleave="blurDrop"
+        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, state ? `dropzone-wrapper--${state}` : '']"
         ref="dropzoneWrapper"
         @click.self="openSelectFile"
         id="dropzoneWrapper"
@@ -40,7 +40,7 @@
         </slot>
         <slot name="description">
           <p class="m-0 description">
-            Files must be under {{ maxFileSize }}MB {{ accept.length ? `and in ${accept.join(', ')} formats` : '' }}</p>
+            Files must be under {{ maxFileSize }}MB {{ accept.length ? `and in ${accept} formats` : '' }}</p>
         </slot>
       </template>
 
@@ -74,14 +74,6 @@
     </div>
     <div class="dropzone-wrapper__disabled" @click.prevent @drop.prevent @dragover.prevent
          v-if="disabled"></div>
-
-    <!--   Message   -->
-    <Transition name="fade-in" mode="in-out">
-      <p class="m-0 message" :class="localState ? `message--${localState}` : ''"
-         v-if="localState !== 'indeterminate' || localMessageState">
-        {{ localState !== 'indeterminate' ? errorMessage : localMessageState }}
-      </p>
-    </Transition>
   </div>
 </template>
 
@@ -116,13 +108,10 @@ const props = defineProps({
   state: {
     type: String,
     validator(value) {
-      return ["error", "success", 'warning', 'indeterminate'].includes(value);
+      return ["error", "success", 'indeterminate'].includes(value);
     },
   },
-  accept: {
-    type: Array,
-    default: []
-  },
+  accept: String,
   maxFileSize: {
     type: Number,
     default: 5
@@ -136,10 +125,6 @@ const props = defineProps({
   imgWidth: [Number, String],
   imgHeight: [Number, String],
   previewWrapperClasses: String,
-  blurOnClickOutside: {
-    type: Boolean,
-    default: true,
-  },
   showSelectButton: {
     type: Boolean,
     default: true
@@ -148,8 +133,6 @@ const props = defineProps({
     type: String,
     default: 'replace'
   },
-  message: String,
-  errorMessage: String
 })
 const emit = defineEmits(['drop', 'update:modelValue'])
 
@@ -157,8 +140,6 @@ const fileInput = ref(null)
 const files = ref([])
 const previewUrls = ref([])
 const active = ref(false)
-const localMessageState = ref(props.message)
-const localState = ref(props.state)
 const dropzoneWrapper = ref(null)
 const id = computed(() => {
   if (props.id) return id;
@@ -168,12 +149,16 @@ const id = computed(() => {
 // Manages input files
 const inputFiles = (e) => {
   const allFiles = [...e.target.files].slice(0, props.maxFiles);
-  const filesAreValid = allFiles.map(item => {
+  const filesSizesAreValid = allFiles.map(item => {
     const itemSize = (item.size / 1024 / 1024).toFixed(2)
     return itemSize <= props.maxFileSize
   })
 
-  if (filesAreValid.every(item => item === true)) {
+  const filesTypesAreValid = allFiles.map(item => {
+    return props.accept.includes(item.type)
+  })
+
+  if (filesSizesAreValid.every(item => item === true) && filesTypesAreValid.every(item => item === true)) {
     if (props.selectFileStrategy === 'replace') {
       files.value = allFiles.map(item => {
         return {
@@ -190,14 +175,19 @@ const inputFiles = (e) => {
         }
       })]
     }
+  }
 
-  } else {
-    localState.value = 'error'
-    if (!props.errorMessage) {
-      localMessageState.value = props.multiple ? `Files are too large, maximum file size is ${props.maxFileSize}MB`
-          : `File is too large, maximum file size is ${props.maxFileSize}MB`
-    }
+  if (filesSizesAreValid.some(item => item !== true)) {
+    const largeFiles = allFiles.filter(item => {
+      const itemSize = (item.size / 1024 / 1024).toFixed(2)
+      return itemSize > props.maxFileSize
+    })
+    emit('error', largeFiles)
+  }
 
+  if (filesTypesAreValid.some(item => item !== true)) {
+    const wrongTypeFiles = allFiles.filter(item => !props.accept.includes(item.type));
+    emit('error', wrongTypeFiles)
   }
 
   const generatedUrls = []
@@ -208,6 +198,7 @@ const inputFiles = (e) => {
       name: item.file.name,
       size: item.file.size,
       type: item.file.type,
+      isTypeAccepted: props.accept.includes(item.file.type),
       id: item.id
     })
   })
@@ -248,7 +239,7 @@ const hover = () => {
     active.value = true
   }
 }
-const blur = () => {
+const blurDrop = () => {
   active.value = false
 }
 
@@ -261,32 +252,6 @@ const openSelectFile = (e) => {
   }
 }
 
-// Click outside blur for clearing error state
-const useDetectOutsideClick = (component, callback) => {
-  if (!component) return
-  const listener = (event) => {
-    if (event.target !== component.value && event.composedPath().includes(component.value)) {
-      return
-    }
-    if (typeof callback === 'function') {
-      callback()
-    }
-  }
-  onMounted(() => {
-    window.addEventListener('click', listener)
-  })
-  onBeforeUnmount(() => {
-    window.removeEventListener('click', listener)
-  })
-
-  return {listener}
-}
-useDetectOutsideClick(dropzoneWrapper, () => {
-  if (props.blurOnClickOutside) {
-    localState.value = 'indeterminate'
-  }
-})
-
 // Updates local preview state on previews prop change
 watchEffect(() => {
   if (props.previews && props.previews.length) {
@@ -296,20 +261,6 @@ watchEffect(() => {
         id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
       }
     })
-  }
-})
-
-// Updates local message state on message prop change
-watchEffect(() => {
-  if (props.message) {
-    localMessageState.value = props.message
-  }
-})
-
-// Updates local state on state prop change
-watchEffect(() => {
-  if (props.state) {
-    localState.value = props.state
   }
 })
 
@@ -338,7 +289,6 @@ watchEffect(() => {
   --v3-dropzone--overlay-opacity: .3;
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
-  --v3-dropzone--warning: 240, 207, 31;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -378,7 +328,7 @@ watchEffect(() => {
 
 .dropzone-wrapper--active {
   border-color: rgba(var(--v3-dropzone--primary)) !important;
-  background: rgba(var(--v3-dropzone--primary), .1) !important;
+  background: rgba(var(--v3-dropzone--primary), 0.1) !important;
 }
 
 .dropzone-wrapper--error {
@@ -387,10 +337,6 @@ watchEffect(() => {
 
 .dropzone-wrapper--success {
   border-color: rgba(var(--v3-dropzone--success)) !important;
-}
-
-.dropzone-wrapper--warning {
-  border-color: rgba(var(--v3-dropzone--warning)) !important;
 }
 
 .select-file {
@@ -455,6 +401,10 @@ watchEffect(() => {
 
 .preview__file {
   border: 1px dashed rgba(var(--v3-dropzone--primary));
+}
+
+.preview__file--error {
+  border-color: rgba(var(--v3-dropzone--error)) !important;
 }
 
 .preview:hover .img-details {
@@ -535,33 +485,5 @@ watchEffect(() => {
 
 .img-remove:hover {
   background: rgba(var(--v3-dropzone--error), .8);
-}
-
-.message {
-  margin-top: 10px !important;
-  font-weight: 400;
-  font-size: 14px;
-  color: var(--v3-dropzone--overlay);
-  transition: all .2s linear;
-}
-
-.message--error {
-  color: rgba(var(--v3-dropzone--error)) !important;
-}
-
-.message--success {
-  color: rgba(var(--v3-dropzone--success)) !important;
-}
-
-.message--warning {
-  color: rgba(var(--v3-dropzone--warning)) !important;
-}
-
-.fade-in-enter-from, .fade-in-leave-to {
-  opacity: 0;
-}
-
-.fade-in-enter-active, .fade-in-leave-active {
-  transition: all .2s linear;
 }
 </style>

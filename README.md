@@ -59,7 +59,7 @@ Local registration:
 | `previews`              | `Array`           | []        | Preview images links (works with mode props)                          |
 | `mode`                  | `string`          | drop      | Defines dropzone functionality to accept drops or just preview images |
 | `disabled`              | `Boolean`         | false     | Disables the whole dropzone                                           |
-| `accept`                | `Array`           | []        | Accepted type of files                                                |
+| `accept`                | `String`          | undefined | Accepted type of files                                                |
 | `maxFileSize`           | `Number`          | 5         | Max file size in Megabytes                                            |
 | `maxFiles`              | `Number`          | 5         | Max files accepted by dropzone                                        |
 | `width`                 | `Number` `String` | undefined | Dropzone container width                                              |
@@ -67,11 +67,14 @@ Local registration:
 | `imgWidth`              | `Number` `String` | undefined | Preview images width                                                  |
 | `imgHeight`             | `Number` `String` | undefined | Preview images height                                                 |
 | `previewWrapperClasses` | `String`          | undefined | Preview images container classes                                      |
-| `blurOnClickOutside`    | `Boolean`         | true      | Removes state on click outside                                        |
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
 | `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
-| `message`               | `String`          | undefined | Message under the dropzone area                                       |
-| `errorMessage`          | `String`          | undefined | Message under the dropzone area for error state                       |
+
+## Events
+
+| Prop    | Data Type | Note                                                                              |
+|---------|-----------|-----------------------------------------------------------------------------------|
+| `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
 
 ## Slots
 
