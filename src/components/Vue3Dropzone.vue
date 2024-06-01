@@ -40,7 +40,7 @@
         </slot>
         <slot name="description">
           <p class="m-0 description">
-            Files must be under {{ maxFileSize }}MB {{ accept.length ? `and in ${accept} formats` : '' }}</p>
+            Files must be under {{ maxFileSize }}MB {{ accept ? `and in ${accept} formats` : '' }}</p>
         </slot>
       </template>
 
