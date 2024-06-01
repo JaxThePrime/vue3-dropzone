@@ -46,7 +46,7 @@
 
       <!--   Images previews   -->
       <template v-else>
-        <div class="preview-container" :class="previewWrapperClasses">
+        <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'drop'">
           <slot name="preview" v-for="img in previewUrls" :data="img">
             <div class="preview"
                  :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/')}"
@@ -69,6 +69,15 @@
               </div>
             </div>
           </slot>
+        </div>
+        <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'preview'">
+          <template v-for="img in previewUrls">
+            <div class="preview"
+                 :class="{'preview__multiple': previewUrls.length > 1}"
+                 :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
+              <img :src="img.src">
+            </div>
+          </template>
         </div>
       </template>
     </div>
