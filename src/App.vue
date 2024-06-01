@@ -1,8 +1,9 @@
 <template>
   <div class="app" style="width: 478px; height: 200px">
     <Vue3Dropzone state="error"
+                  message="asd"
+                  error-message="asdasd"
                   :max-file-size="1"
-                  multiple select-file-strategy="merge"
                   v-model="files">
     </Vue3Dropzone>
     {{ isFocused }}

@@ -52,7 +52,8 @@
                  :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/')}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
               <img :src="img.src" :alt="img.name" v-if="img && img.type && img.type.includes('image/')">
-              <Icon :name="img.name.split('.').pop()" v-if="img && img.type && !img.type.includes('image/') || img && img.type && !img.type.includes('video/')"/>
+              <Icon :name="img.name.split('.').pop()"
+                    v-if="img && img.type && !img.type.includes('image/') || img && img.type && !img.type.includes('video/')"/>
               <div class="img-details" v-if="img.name || img.size">
                 <button class="img-remove" @click="removeImg(img)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -77,8 +78,8 @@
     <!--   Message   -->
     <Transition name="fade-in" mode="in-out">
       <p class="m-0 message" :class="localState ? `message--${localState}` : ''"
-         v-if="localMessageState || localState === 'error' || localState === 'indeterminate'">
-        {{ localState === 'error' ? errorMessage : localMessageState }}
+         v-if="localState !== 'indeterminate' || localMessageState">
+        {{ localState !== 'indeterminate' ? errorMessage : localMessageState }}
       </p>
     </Transition>
   </div>
