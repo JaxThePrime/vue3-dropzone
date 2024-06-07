@@ -1,7 +1,6 @@
 <template>
   <div class="app" style="width: 478px; height: 200px">
-    <Vue3Dropzone v-model="files" mode="preview"
-                  :previews="['https://vue-dropzone-preview.vercel.app/pure-nature.jpg']">
+    <Vue3Dropzone v-model="files" accept="image/png">
     </Vue3Dropzone>
   </div>
 </template>

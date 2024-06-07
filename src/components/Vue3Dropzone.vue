@@ -164,10 +164,13 @@ const inputFiles = (e) => {
   })
 
   const filesTypesAreValid = allFiles.map(item => {
-    return props.accept.includes(item.type)
+    if (props.accept) {
+      return props.accept.includes(item.type)
+    }
+    return []
   })
 
-  if (filesSizesAreValid.every(item => item === true) && filesTypesAreValid.every(item => item === true)) {
+  if ((filesSizesAreValid.every(item => item === true) && (props.accept && filesTypesAreValid.every(item => item === true))) || filesSizesAreValid.every(item => item === true)) {
     if (props.selectFileStrategy === 'replace') {
       files.value = allFiles.map(item => {
         return {
@@ -194,7 +197,7 @@ const inputFiles = (e) => {
     emit('error', largeFiles)
   }
 
-  if (filesTypesAreValid.some(item => item !== true)) {
+  if (props.accept && filesTypesAreValid.some(item => item !== true)) {
     const wrongTypeFiles = allFiles.filter(item => !props.accept.includes(item.type));
     emit('error', wrongTypeFiles)
   }
@@ -207,7 +210,7 @@ const inputFiles = (e) => {
       name: item.file.name,
       size: item.file.size,
       type: item.file.type,
-      isTypeAccepted: props.accept.includes(item.file.type),
+      isTypeAccepted: props.accept ? props.accept.includes(item.file.type) : undefined,
       id: item.id
     })
   })
