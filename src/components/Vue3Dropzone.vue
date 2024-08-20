@@ -143,7 +143,7 @@ const props = defineProps({
     default: 'replace'
   },
 })
-const emit = defineEmits(['drop', 'update:modelValue'])
+const emit = defineEmits(['drop', 'update:modelValue', 'error'])
 
 const fileInput = ref(null)
 const files = ref([])
