@@ -87,7 +87,7 @@
 </template>
 
 <script setup>
-import {computed, onBeforeUnmount, onMounted, ref, watchEffect} from "vue";
+import {computed, defineExpose, ref, watchEffect} from "vue";
 import Icon from "./Icon.vue";
 
 const props = defineProps({
@@ -242,6 +242,7 @@ const drop = (e) => {
 const removeImg = (item) => {
   previewUrls.value = previewUrls.value.filter(url => url.id !== item.id)
   files.value = files.value.filter(file => file.id !== item.id)
+  fileInput.value.value = ''
   emit('update:modelValue', files.value)
 }
 
@@ -282,6 +283,13 @@ watchEffect(() => {
   }
 })
 
+const clearPreview = () => {
+  previewUrls.value.forEach(img => removeImg(img))
+};
+
+defineExpose({
+  clearPreview
+})
 </script>
 
 <style scoped>
