@@ -88,7 +88,9 @@ Local registration:
 
 ```jsx
 <Vue3Dropzone v-model="files">
-  <template #placeholder-img><img src='your-custom-image'></template>
+  <template #placeholder-img>
+    <img src="your-custom-image" />
+  </template>
   <template #titles> Your Custom Title </template>
   <template #button="{ fileInput }">
     <button @click="fileInput?.click()" class="custom-button">Your Custom Select Button</button>
