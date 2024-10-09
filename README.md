@@ -86,6 +86,17 @@ Local registration:
 | `placeholder-img` | `undefined` |
 | `title`           | `undefined` |
 
+```jsx
+<Vue3Dropzone v-model="files">
+  <template #placeholder-img><img src='your-custom-image'></template>
+  <template #titles> Your Custom Title </template>
+  <template #button="{ fileInput }">
+    <button @click="fileInput?.click()" class="custom-button">Your Custom Select Button</button>
+  </template>
+  <template #description>Your Custom Description</template>
+</Vue3Dropzone>
+```
+
 ## Css variables
 
 | Name                             | Value           |    
