@@ -86,6 +86,10 @@ Local registration:
 | `placeholder-img` | `undefined` |
 | `title`           | `undefined` |
 
+## Customizing Slots
+
+You can easily customize the component by overriding the available slots. Below is an example of how to use the different slots (button, placeholder-img, title, description) to personalize the behavior and appearance of the component.
+
 ```jsx
 <Vue3Dropzone v-model="files">
   <template #placeholder-img>
