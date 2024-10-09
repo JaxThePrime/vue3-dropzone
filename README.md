@@ -95,7 +95,7 @@ You can easily customize the component by overriding the available slots. Below 
   <template #placeholder-img>
     <img src="your-custom-image" />
   </template>
-  <template #titles> Your Custom Title </template>
+  <template #title>Your Custom Title</template>
   <template #button="{ fileInput }">
     <button @click="fileInput?.click()" class="custom-button">Your Custom Select Button</button>
   </template>
