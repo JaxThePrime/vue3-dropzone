@@ -101,6 +101,7 @@ export default {
   }
 }
 </script>
+```
 
 ## Slots
 
