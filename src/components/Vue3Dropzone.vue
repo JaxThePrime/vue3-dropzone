@@ -44,18 +44,18 @@
         </slot>
       </template>
 
-      <!--   Images previews   -->
+      <!--   Files previews   -->
       <template v-else>
         <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'drop'">
-          <slot name="preview" v-for="img in previewUrls" :data="img">
+          <slot name="preview" v-for="file in previewUrls" :data="file">
             <div class="preview"
-                 :class="{'preview__multiple': multiple, 'preview__file': img && img.type && !img.type.includes('image/')}"
+                 :class="{'preview__multiple': multiple, 'preview__file': file && file.type && !file.type.includes('image/')}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="img.src" :alt="img.name" v-if="img && img.type && img.type.includes('image/')">
-              <Icon :name="img.name.split('.').pop()"
-                    v-if="img && img.type && !img.type.includes('image/') || img && img.type && !img.type.includes('video/')"/>
-              <div class="img-details" v-if="img.name || img.size">
-                <button class="img-remove" @click="removeImg(img)">
+              <img :src="file.src" :alt="file.name" v-if="file && file.type && file.type.includes('image/')">
+              <Icon :name="file.name.split('.').pop()"
+                    v-if="file && file.type && !file.type.includes('image/') || file && file.type && !file.type.includes('video/')"/>
+              <div class="img-details" v-if="file.name || file.size">
+                <button class="img-remove" @click="removeFile(file)">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                        class="icon icon-tabler icons-tabler-outline icon-tabler-x">
@@ -64,18 +64,18 @@
                     <path d="M6 6l12 12"/>
                   </svg>
                 </button>
-                <h2>{{ img.name }}</h2>
-                <span>{{ (img.size / 1024 / 1024).toFixed(2) }}MB</span>
+                <h2>{{ file.name }}</h2>
+                <span>{{ (file.size / 1024 / 1024).toFixed(2) }}MB</span>
               </div>
             </div>
           </slot>
         </div>
         <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'preview'">
-          <template v-for="img in previewUrls">
+          <template v-for="file in previewUrls">
             <div class="preview"
                  :class="{'preview__multiple': previewUrls.length > 1}"
                  :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="img.src">
+              <img :src="file.src">
             </div>
           </template>
         </div>
@@ -238,8 +238,8 @@ const drop = (e) => {
   }
 }
 
-// Removes img from files list
-const removeImg = (item) => {
+// Removes file from files list
+const removeFile = (item) => {
   previewUrls.value = previewUrls.value.filter(url => url.id !== item.id)
   files.value = files.value.filter(file => file.id !== item.id)
   fileInput.value.value = ''
@@ -284,7 +284,7 @@ watchEffect(() => {
 })
 
 const clearPreview = () => {
-  previewUrls.value.forEach(img => removeImg(img))
+  previewUrls.value.forEach(file => removeFile(file))
 };
 
 defineExpose({
