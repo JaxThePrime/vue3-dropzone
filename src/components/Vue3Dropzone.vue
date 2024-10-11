@@ -14,7 +14,7 @@
         id="dropzoneWrapper"
     >
       <!--   Input   -->
-      <input type="file" ref="fileInput" class="hidden" :id="id" :accept="accept" @input="inputFiles"
+      <input type="file" ref="fileInput" class="hidden" :id="fileInputId" :accept="accept" @input="inputFiles"
              :multiple="multiple">
 
       <!--   Placeholder content   -->
@@ -133,6 +133,7 @@ const props = defineProps({
   height: [Number, String],
   imgWidth: [Number, String],
   imgHeight: [Number, String],
+  fileInputId: String,
   previewWrapperClasses: String,
   showSelectButton: {
     type: Boolean,
@@ -150,10 +151,14 @@ const files = ref([])
 const previewUrls = ref([])
 const active = ref(false)
 const dropzoneWrapper = ref(null)
-const id = computed(() => {
-  if (props.id) return id;
-  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+const fileInputId = computed(() => {
+  if (props.fileInputId) return props.fileInputId;
+  return generateFileId();
 })
+
+const generateFileId = () => {
+  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+}
 
 // Manages input files
 const inputFiles = (e) => {
@@ -175,7 +180,7 @@ const inputFiles = (e) => {
       files.value = allFiles.map(item => {
         return {
           file: item,
-          id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+          id: generateFileId()
         }
       })
     }
@@ -183,7 +188,7 @@ const inputFiles = (e) => {
       files.value = [...files.value, ...allFiles.map(item => {
         return {
           file: item,
-          id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+          id: generateFileId()
         }
       })]
     }
@@ -277,7 +282,7 @@ watchEffect(() => {
     previewUrls.value = props.previews.map(item => {
       return {
         src: item,
-        id: Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
+        id: generateFileId()
       }
     })
   }
