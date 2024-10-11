@@ -65,7 +65,7 @@
                   </svg>
                 </button>
                 <h2>{{ file.name }}</h2>
-                <span>{{ (file.size / 1024 / 1024).toFixed(2) }}MB</span>
+                <span>{{ formatSize(file.size) }}MB</span>
               </div>
             </div>
           </slot>
@@ -215,6 +215,12 @@ const inputFiles = (e) => {
     })
   })
   previewUrls.value = generatedUrls;
+}
+
+// Formats file size
+const formatSize = (size) => {
+    const i = Math.floor(Math.log(size) / Math.log(1024));
+    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB'][i];
 }
 
 // Toggles active state for dropping files(styles)
