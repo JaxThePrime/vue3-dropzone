@@ -1,34 +1,52 @@
 <template>
   <div class="dropzone">
     <div
-        class="dropzone-wrapper" :style="{width,height}"
-        @dragenter.prevent="toggleActive"
-        @dragleave.prevent="toggleActive"
-        @drop.prevent="drop"
-        @dragover.prevent
-        @mouseover="hover"
-        @mouseleave="blurDrop"
-        :class="[{'dropzone-wrapper--active': active, 'dropzone-wrapper--disabled': disabled}, state ? `dropzone-wrapper--${state}` : '']"
-        ref="dropzoneWrapper"
-        @click.self="openSelectFile"
-        id="dropzoneWrapper"
+      class="dropzone-wrapper"
+      :style="{ width, height }"
+      @dragenter.prevent="toggleActive"
+      @dragleave.prevent="toggleActive"
+      @drop.prevent="drop"
+      @dragover.prevent
+      @mouseover="hover"
+      @mouseleave="blurDrop"
+      :class="[
+        {
+          'dropzone-wrapper--active': active,
+          'dropzone-wrapper--disabled': disabled,
+        },
+        state ? `dropzone-wrapper--${state}` : '',
+      ]"
+      ref="dropzoneWrapper"
+      @click.self="openSelectFile"
+      id="dropzoneWrapper"
     >
       <!--   Input   -->
-      <input type="file" ref="fileInput" class="hidden" :id="fileInputId" :accept="accept" @input="inputFiles"
-             :multiple="multiple">
+      <<<<<<< HEAD
+      <input
+        type="file"
+        ref="fileInput"
+        class="hidden"
+        :id="fileInputId"
+        :accept="accept"
+        @input="inputFiles"
+        :multiple="multiple"
+      />
+      =======
+      <input
+        type="file"
+        ref="fileInput"
+        class="hidden"
+        :id="fileInputId"
+        :accept="accept"
+        @input="inputFiles"
+        :multiple="multiple"
+      />
+      >>>>>>> b109920c8935bb042b11a15b7b5ad0a501b6c64b
 
       <!--   Placeholder content   -->
       <template v-if="!previewUrls.length">
         <slot name="placeholder-img">
-          <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none"
-               class="transition-all decoration-neutral-150 ease-linear">
-            <path opacity=".4"
-                  d="M22 7.81v6.09l-1.63-1.4c-.78-.67-2.04-.67-2.82 0l-4.16 3.57c-.78.67-2.04.67-2.82 0l-.34-.28c-.71-.62-1.84-.68-2.64-.14l-4.92 3.3-.11.08c-.37-.8-.56-1.75-.56-2.84V7.81C2 4.17 4.17 2 7.81 2h8.38C19.83 2 22 4.17 22 7.81Z"
-                  fill="#c3c3c3"></path>
-            <path
-                d="M9.001 10.381a2.38 2.38 0 1 0 0-4.76 2.38 2.38 0 0 0 0 4.76ZM21.999 13.899v2.29c0 3.64-2.17 5.81-5.81 5.81h-8.38c-2.55 0-4.39-1.07-5.25-2.97l.11-.08 4.92-3.3c.8-.54 1.93-.48 2.64.14l.34.28c.78.67 2.04.67 2.82 0l4.16-3.57c.78-.67 2.04-.67 2.82 0l1.63 1.4Z"
-                fill="#c3c3c3"></path>
-          </svg>
+          <PlaceholderImage />
         </slot>
         <slot name="title">
           <div class="titles">
@@ -36,32 +54,71 @@
           </div>
         </slot>
         <slot name="button" :fileInput="fileInput">
-          <button @click="fileInput?.click()" v-if="showSelectButton" class="select-file">Select File</button>
+          <button
+            @click="fileInput?.click()"
+            v-if="showSelectButton"
+            class="select-file"
+          >
+            Select File
+          </button>
         </slot>
         <slot name="description">
           <p class="m-0 description">
-            Files must be under {{ maxFileSize }}MB {{ accept ? `and in ${accept} formats` : '' }}</p>
+            Files must be under {{ maxFileSize }}MB
+            {{ accept ? `and in ${accept} formats` : "" }}
+          </p>
         </slot>
       </template>
 
       <!--   Files previews   -->
       <template v-else>
-        <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'drop'">
+        <div
+          class="preview-container"
+          :class="previewWrapperClasses"
+          v-if="mode === 'drop'"
+        >
           <slot name="preview" v-for="file in previewUrls" :data="file">
-            <div class="preview"
-                 :class="{'preview__multiple': multiple, 'preview__file': file && file.type && !file.type.includes('image/')}"
-                 :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="file.src" :alt="file.name" v-if="file && file.type && file.type.includes('image/')">
-              <Icon :name="file.name.split('.').pop()"
-                    v-if="file && file.type && !file.type.includes('image/') || file && file.type && !file.type.includes('video/')"/>
+            <div
+              class="preview"
+              :class="{
+                preview__multiple: multiple,
+                preview__file:
+                  file && file.type && !file.type.includes('image/'),
+              }"
+              :style="{
+                width: `${imgWidth} !important`,
+                height: `${imgHeight} !important`,
+              }"
+            >
+              <img
+                :src="file.src"
+                :alt="file.name"
+                v-if="file && file.type && file.type.includes('image/')"
+              />
+              <Icon
+                :name="file.name.split('.').pop()"
+                v-if="
+                  (file && file.type && !file.type.includes('image/')) ||
+                  (file && file.type && !file.type.includes('video/'))
+                "
+              />
               <div class="img-details" v-if="file.name || file.size">
                 <button class="img-remove" @click="removeFile(file)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                       class="icon icon-tabler icons-tabler-outline icon-tabler-x">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M18 6l-12 12"/>
-                    <path d="M6 6l12 12"/>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M18 6l-12 12" />
+                    <path d="M6 6l12 12" />
                   </svg>
                 </button>
                 <h2>{{ file.name }}</h2>
@@ -70,64 +127,79 @@
             </div>
           </slot>
         </div>
-        <div class="preview-container" :class="previewWrapperClasses" v-if="mode === 'preview'">
+        <div
+          class="preview-container"
+          :class="previewWrapperClasses"
+          v-if="mode === 'preview'"
+        >
           <template v-for="file in previewUrls">
-            <div class="preview"
-                 :class="{'preview__multiple': previewUrls.length > 1}"
-                 :style="{width: `${imgWidth} !important`, height: `${imgHeight} !important`}">
-              <img :src="file.src">
+            <div
+              class="preview"
+              :class="{ preview__multiple: previewUrls.length > 1 }"
+              :style="{
+                width: `${imgWidth} !important`,
+                height: `${imgHeight} !important`,
+              }"
+            >
+              <img :src="file.src" />
             </div>
           </template>
         </div>
       </template>
     </div>
-    <div class="dropzone-wrapper__disabled" @click.prevent @drop.prevent @dragover.prevent
-         v-if="disabled"></div>
+    <div
+      class="dropzone-wrapper__disabled"
+      @click.prevent
+      @drop.prevent
+      @dragover.prevent
+      v-if="disabled"
+    ></div>
   </div>
 </template>
 
 <script setup>
-import {computed, defineExpose, ref, watchEffect} from "vue";
+import { computed, defineExpose, ref, watchEffect } from "vue";
 import Icon from "./Icon.vue";
+import PlaceholderImage from "./PlaceholderImage.vue";
 
 const props = defineProps({
   modelValue: {
     type: Array,
-    default: []
+    default: [],
   },
   multiple: {
     type: Boolean,
-    default: false
+    default: false,
   },
   previews: {
     type: Array,
-    default: []
+    default: [],
   },
   mode: {
     type: String,
-    default: 'drop',
+    default: "drop",
     validator(value) {
       return ["drop", "preview"].includes(value);
     },
   },
   disabled: {
     type: Boolean,
-    default: false
+    default: false,
   },
   state: {
     type: String,
     validator(value) {
-      return ["error", "success", 'indeterminate'].includes(value);
+      return ["error", "success", "indeterminate"].includes(value);
     },
   },
   accept: String,
   maxFileSize: {
     type: Number,
-    default: 5
+    default: 5,
   },
   maxFiles: {
     type: Number,
-    default: 5
+    default: 5,
   },
   width: [Number, String],
   height: [Number, String],
@@ -137,170 +209,185 @@ const props = defineProps({
   previewWrapperClasses: String,
   showSelectButton: {
     type: Boolean,
-    default: true
+    default: true,
   },
   selectFileStrategy: {
     type: String,
-    default: 'replace'
+    default: "replace",
   },
-})
-const emit = defineEmits(['drop', 'update:modelValue', 'error'])
+});
+const emit = defineEmits(["drop", "update:modelValue", "error"]);
 
-const fileInput = ref(null)
-const files = ref([])
-const previewUrls = ref([])
-const active = ref(false)
-const dropzoneWrapper = ref(null)
+const fileInput = ref(null);
+const files = ref([]);
+const previewUrls = ref([]);
+const active = ref(false);
+const dropzoneWrapper = ref(null);
 const fileInputId = computed(() => {
   if (props.fileInputId) return props.fileInputId;
   return generateFileId();
-})
+});
 
 const generateFileId = () => {
-  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()))
-}
+  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
+};
 
 // Manages input files
 const inputFiles = (e) => {
   const allFiles = [...e.target.files].slice(0, props.maxFiles);
-  const filesSizesAreValid = allFiles.map(item => {
-    const itemSize = (item.size / 1024 / 1024).toFixed(2)
-    return itemSize <= props.maxFileSize
-  })
+  const filesSizesAreValid = allFiles.map((item) => {
+    const itemSize = (item.size / 1024 / 1024).toFixed(2);
+    return itemSize <= props.maxFileSize;
+  });
 
-  const filesTypesAreValid = allFiles.map(item => {
+  const filesTypesAreValid = allFiles.map((item) => {
     if (props.accept) {
-      return props.accept.includes(item.type)
+      return props.accept.includes(item.type);
     }
-    return []
-  })
+    return [];
+  });
 
-  if ((filesSizesAreValid.every(item => item === true) && (props.accept && filesTypesAreValid.every(item => item === true))) || filesSizesAreValid.every(item => item === true)) {
-    if (props.selectFileStrategy === 'replace') {
-      files.value = allFiles.map(item => {
-        return {
-          file: item,
-          id: generateFileId()
-        }
-      })
+  if (
+    (filesSizesAreValid.every((item) => item === true) &&
+      props.accept &&
+      filesTypesAreValid.every((item) => item === true)) ||
+    filesSizesAreValid.every((item) => item === true)
+  ) {
+    const processFile = (file) => ({
+      file: file,
+      id: generateFileId(),
+    });
+
+    if (props.selectFileStrategy === "replace") {
+      files.value = allFiles.map(processFile);
     }
-    if (props.selectFileStrategy === 'merge') {
-      files.value = [...files.value, ...allFiles.map(item => {
-        return {
-          file: item,
-          id: generateFileId()
-        }
-      })]
+    if (props.selectFileStrategy === "merge") {
+      files.value = [...files.value, ...allFiles.map(processFile)];
     }
   }
 
-  if (filesSizesAreValid.some(item => item !== true)) {
-    const largeFiles = allFiles.filter(item => {
-      const itemSize = (item.size / 1024 / 1024).toFixed(2)
-      return itemSize > props.maxFileSize
-    })
-    emit('error', largeFiles)
+  if (filesSizesAreValid.some((item) => item !== true)) {
+    const largeFiles = allFiles.filter((item) => {
+      const itemSize = (item.size / 1024 / 1024).toFixed(2);
+      return itemSize > props.maxFileSize;
+    });
+    handleFileError("file-too-large", largeFiles);
   }
 
-  if (props.accept && filesTypesAreValid.some(item => item !== true)) {
-    const wrongTypeFiles = allFiles.filter(item => !props.accept.includes(item.type));
-    emit('error', wrongTypeFiles)
+  if (props.accept && filesTypesAreValid.some((item) => item !== true)) {
+    const wrongTypeFiles = allFiles.filter(
+      (item) => !props.accept.includes(item.type)
+    );
+    handleFileError("invalid-file-format", wrongTypeFiles);
   }
 
-  const generatedUrls = []
+  const generatedUrls = [];
 
   files.value.map((item) => {
     generatedUrls.push({
+      id: item.id,
       src: URL.createObjectURL(item.file),
       name: item.file.name,
       size: item.file.size,
       type: item.file.type,
-      isTypeAccepted: props.accept ? props.accept.includes(item.file.type) : undefined,
-      id: item.id
-    })
-  })
+      isTypeAccepted: props.accept
+        ? props.accept.includes(item.file.type)
+        : undefined,
+    });
+  });
   previewUrls.value = generatedUrls;
-}
+};
 
 // Formats file size
 const formatSize = (size) => {
-    const i = Math.floor(Math.log(size) / Math.log(1024));
-    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB'][i];
-}
+  const i = Math.floor(Math.log(size) / Math.log(1024));
+  return (
+    (size / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "KB", "MB", "GB"][i]
+  );
+};
 
 // Toggles active state for dropping files(styles)
 const toggleActive = () => {
-  if (!props.disabled && props.mode !== 'preview') {
-    active.value = !active.value
+  if (!props.disabled && props.mode !== "preview") {
+    active.value = !active.value;
   }
-}
+};
 
 // Handles dropped files and input them
 const drop = (e) => {
-  toggleActive()
-  if (!props.disabled && props.mode !== 'preview') {
+  toggleActive();
+  if (!props.disabled && props.mode !== "preview") {
     const files = {
       target: {
-        files: [...e.dataTransfer.files]
-      }
-    }
-    emit('drop', e)
-    inputFiles(files)
+        files: [...e.dataTransfer.files],
+      },
+    };
+    emit("drop", e);
+    inputFiles(files);
   }
-}
+};
 
 // Removes file from files list
 const removeFile = (item) => {
-  previewUrls.value = previewUrls.value.filter(url => url.id !== item.id)
-  files.value = files.value.filter(file => file.id !== item.id)
-  fileInput.value.value = ''
-  emit('update:modelValue', files.value)
-}
+  previewUrls.value = previewUrls.value.filter((url) => url.id !== item.id);
+  files.value = files.value.filter((file) => file.id !== item.id);
+  fileInput.value.value = "";
+  emit("update:modelValue", files.value);
+};
 
 // Hover and blur manager
 const hover = () => {
-  if (!files.value.length && props.state === 'indeterminate') {
-    active.value = true
+  if (!files.value.length && props.state === "indeterminate") {
+    active.value = true;
   }
-}
+};
 const blurDrop = () => {
-  active.value = false
-}
+  active.value = false;
+};
 
 // Opens os selecting file window
 const openSelectFile = (e) => {
-  if (!props.disabled && props.mode === 'drop' && e.target.id === 'dropzoneWrapper') {
-    fileInput.value.click()
+  if (
+    !props.disabled &&
+    props.mode === "drop" &&
+    e.target.id === "dropzoneWrapper"
+  ) {
+    fileInput.value.click();
   } else {
-    e.preventDefault()
+    e.preventDefault();
   }
-}
+};
+
+// Handles file errors
+const handleFileError = (type, files) => {
+  emit("error", { type: type, files: files });
+};
 
 // Updates local preview state on previews prop change
 watchEffect(() => {
   if (props.previews && props.previews.length) {
-    previewUrls.value = props.previews.map(item => {
+    previewUrls.value = props.previews.map((item) => {
       return {
         src: item,
-        id: generateFileId()
-      }
-    })
+        id: generateFileId(),
+      };
+    });
   }
-})
+});
 
 watchEffect(() => {
   if (files.value && files.value.length) {
-    emit('update:modelValue', files.value)
+    emit("update:modelValue", files.value);
   }
-})
+});
 
 const clearPreview = () => {
-  previewUrls.value.forEach(file => removeFile(file))
+  previewUrls.value.forEach((file) => removeFile(file));
 };
 
 defineExpose({
-  clearPreview
-})
+  clearPreview,
+});
 </script>
 
 <style scoped>
@@ -317,7 +404,7 @@ defineExpose({
   --v3-dropzone--border: 214, 216, 220;
   --v3-dropzone--description: 190, 191, 195;
   --v3-dropzone--overlay: 40, 44, 53;
-  --v3-dropzone--overlay-opacity: .3;
+  --v3-dropzone--overlay-opacity: 0.3;
   --v3-dropzone--error: 255, 76, 81;
   --v3-dropzone--success: 36, 179, 100;
   position: relative;
@@ -338,12 +425,12 @@ defineExpose({
   align-items: center;
   width: auto;
   height: 200px;
-  transition: .3s all ease;
+  transition: 0.3s all ease;
   justify-content: center;
 }
 
 .dropzone-wrapper--disabled {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .dropzone-wrapper__disabled {
@@ -455,9 +542,12 @@ defineExpose({
   inset-inline-start: 0;
   width: 100%;
   height: 100%;
-  background: rgba(var(--v3-dropzone--overlay), var(--v3-dropzone--overlay-opacity));
+  background: rgba(
+    var(--v3-dropzone--overlay),
+    var(--v3-dropzone--overlay-opacity)
+  );
   border-radius: 8px;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
   -webkit-backdrop-filter: blur(7px);
   backdrop-filter: blur(7px);
   filter: grayscale(1%);
@@ -507,14 +597,14 @@ defineExpose({
   position: absolute;
   top: 10px;
   right: 10px;
-  transition: all .2s linear;
+  transition: all 0.2s linear;
 }
 
 .img-remove:active {
-  transform: scale(.9);
+  transform: scale(0.9);
 }
 
 .img-remove:hover {
-  background: rgba(var(--v3-dropzone--error), .8);
+  background: rgba(var(--v3-dropzone--error), 0.8);
 }
 </style>
