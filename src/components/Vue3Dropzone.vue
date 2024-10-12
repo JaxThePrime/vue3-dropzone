@@ -65,13 +65,13 @@
           :class="previewWrapperClasses"
           v-if="mode === 'drop'"
         >
-          <slot name="preview" v-for="file in previewUrls" :data="file">
+          <slot name="preview" v-for="file in files" :data="file">
             <div
               class="preview"
               :class="{
                 preview__multiple: multiple,
                 preview__file:
-                  file && file.type && !file.type.includes('image/'),
+                  file && file.file.type && !file.file.type.includes('image/'),
               }"
               :style="{
                 width: `${imgWidth} !important`,
@@ -80,17 +80,21 @@
             >
               <img
                 :src="file.src"
-                :alt="file.name"
-                v-if="file && file.type && file.type.includes('image/')"
-              />
-              <Icon
-                :name="file.name.split('.').pop()"
+                :alt="file.file.name"
                 v-if="
-                  (file && file.type && !file.type.includes('image/')) ||
-                  (file && file.type && !file.type.includes('video/'))
+                  file && file.file.type && file.file.type.includes('image/')
                 "
               />
-              <div class="img-details" v-if="file.name || file.size">
+              <Icon
+                :name="file.file.name.split('.').pop()"
+                v-if="
+                  (file &&
+                    file.file.type &&
+                    !file.file.type.includes('image/')) ||
+                  (file && file.file.type && !file.file.type.includes('video/'))
+                "
+              />
+              <div class="img-details" v-if="file.file.name || file.file.size">
                 <button class="img-remove" @click="removeFile(file)">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -109,8 +113,8 @@
                     <path d="M6 6l12 12" />
                   </svg>
                 </button>
-                <h2>{{ file.name }}</h2>
-                <span>{{ formatSize(file.size) }}MB</span>
+                <h2>{{ file.file.name }}</h2>
+                <span>{{ formatSize(file.file.size) }}</span>
               </div>
             </div>
           </slot>
@@ -203,6 +207,20 @@ const props = defineProps({
     type: String,
     default: "replace",
   },
+  serverSide: {
+    type: Boolean,
+    default: false,
+  },
+  endpoint: {
+    type: String,
+    required(props) {
+      return props.serverSide;
+    },
+  },
+  headers: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 const emit = defineEmits(["drop", "update:modelValue", "error"]);
 
@@ -244,6 +262,10 @@ const inputFiles = (e) => {
     const processFile = (file) => ({
       file: file,
       id: generateFileId(),
+      src: URL.createObjectURL(file),
+      progress: 0,
+      status: "pending",
+      message: null,
     });
 
     if (props.selectFileStrategy === "replace") {
@@ -254,17 +276,28 @@ const inputFiles = (e) => {
     }
   }
 
-if (filesSizesAreValid.some(item => item !== true)) {
-    const largeFiles = allFiles.filter(item => {
-      const itemSize = (item.size / 1024 / 1024).toFixed(2)
-      return itemSize > props.maxFileSize
-    })
-    handleFileError('file-too-large', largeFiles);
+  if (filesSizesAreValid.some((item) => item !== true)) {
+    const largeFiles = allFiles.filter((item) => {
+      const itemSize = (item.size / 1024 / 1024).toFixed(2);
+      return itemSize > props.maxFileSize;
+    });
+    handleFileError("file-too-large", largeFiles);
   }
 
-  if (props.accept && filesTypesAreValid.some(item => item !== true)) {
-    const wrongTypeFiles = allFiles.filter(item => !props.accept.includes(item.type));
-    handleFileError('invalid-file-format', wrongTypeFiles);
+  if (props.accept && filesTypesAreValid.some((item) => item !== true)) {
+    const wrongTypeFiles = allFiles.filter(
+      (item) => !props.accept.includes(item.type)
+    );
+    handleFileError("invalid-file-format", wrongTypeFiles);
+  }
+
+  // Upload files to server
+  if (props.serverSide) {
+    files.value
+      .filter((fileItem) => fileItem.status !== "success")
+      .forEach((fileItem) => {
+        uploadFileToServer(fileItem);
+      });
   }
 
   const generatedUrls = [];
@@ -282,6 +315,57 @@ if (filesSizesAreValid.some(item => item !== true)) {
     });
   });
   previewUrls.value = generatedUrls;
+};
+
+// Upload client
+const uploadClient = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", props.endpoint, true);
+  Object.keys(props.headers).forEach((key) => {
+    xhr.setRequestHeader(key, props.headers[key]);
+  });
+  return xhr;
+};
+
+// Upload file to server
+const uploadFileToServer = (fileItem) => {
+  const xhr = uploadClient();
+  const formData = new FormData();
+  formData.append("file", fileItem.file);
+
+  // Start upload
+  xhr.upload.onloadstart = () => {
+    fileItem.status = "uploading";
+    fileItem.message = "Upload in progress";
+  };
+
+  // Upload progress
+  xhr.upload.onprogress = (event) => {
+    if (event.lengthComputable) {
+      fileItem.progress = Math.round((event.loaded / event.total) * 100);
+    }
+  };
+
+  // Upload success
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      fileItem.status = "success";
+      fileItem.message = "File uploaded successfully";
+    } else {
+      fileItem.status = "error";
+      fileItem.message = xhr.statusText;
+    }
+  };
+
+  // Upload error
+  xhr.onerror = () => {
+    fileItem.status = "error";
+    fileItem.message = "Upload failed";
+    handleFileError("upload-error", [fileItem.file]);
+  };
+
+  // Send file to server
+  xhr.send(formData);
 };
 
 // Formats file size
