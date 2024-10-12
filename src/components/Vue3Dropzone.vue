@@ -241,24 +241,16 @@ const inputFiles = (e) => {
       filesTypesAreValid.every((item) => item === true)) ||
     filesSizesAreValid.every((item) => item === true)
   ) {
+    const processFile = (file) => ({
+      file: file,
+      id: generateFileId(),
+    });
+
     if (props.selectFileStrategy === "replace") {
-      files.value = allFiles.map((item) => {
-        return {
-          file: item,
-          id: generateFileId(),
-        };
-      });
+      files.value = allFiles.map(processFile);
     }
     if (props.selectFileStrategy === "merge") {
-      files.value = [
-        ...files.value,
-        ...allFiles.map((item) => {
-          return {
-            file: item,
-            id: generateFileId(),
-          };
-        }),
-      ];
+      files.value = [...files.value, ...allFiles.map(processFile)];
     }
   }
 
@@ -281,6 +273,7 @@ const inputFiles = (e) => {
 
   files.value.map((item) => {
     generatedUrls.push({
+      id: item.id,
       src: URL.createObjectURL(item.file),
       name: item.file.name,
       size: item.file.size,
@@ -288,7 +281,6 @@ const inputFiles = (e) => {
       isTypeAccepted: props.accept
         ? props.accept.includes(item.file.type)
         : undefined,
-      id: item.id,
     });
   });
   previewUrls.value = generatedUrls;
