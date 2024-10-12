@@ -21,7 +21,6 @@
       id="dropzoneWrapper"
     >
       <!--   Input   -->
-      <<<<<<< HEAD
       <input
         type="file"
         ref="fileInput"
@@ -31,17 +30,6 @@
         @input="inputFiles"
         :multiple="multiple"
       />
-      =======
-      <input
-        type="file"
-        ref="fileInput"
-        class="hidden"
-        :id="fileInputId"
-        :accept="accept"
-        @input="inputFiles"
-        :multiple="multiple"
-      />
-      >>>>>>> b109920c8935bb042b11a15b7b5ad0a501b6c64b
 
       <!--   Placeholder content   -->
       <template v-if="!previewUrls.length">
