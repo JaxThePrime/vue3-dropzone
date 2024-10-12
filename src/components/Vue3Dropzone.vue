@@ -254,19 +254,17 @@ const inputFiles = (e) => {
     }
   }
 
-  if (filesSizesAreValid.some((item) => item !== true)) {
-    const largeFiles = allFiles.filter((item) => {
-      const itemSize = (item.size / 1024 / 1024).toFixed(2);
-      return itemSize > props.maxFileSize;
-    });
-    emit("error", largeFiles);
+if (filesSizesAreValid.some(item => item !== true)) {
+    const largeFiles = allFiles.filter(item => {
+      const itemSize = (item.size / 1024 / 1024).toFixed(2)
+      return itemSize > props.maxFileSize
+    })
+    handleFileError('file-too-large', largeFiles);
   }
 
-  if (props.accept && filesTypesAreValid.some((item) => item !== true)) {
-    const wrongTypeFiles = allFiles.filter(
-      (item) => !props.accept.includes(item.type)
-    );
-    emit("error", wrongTypeFiles);
+  if (props.accept && filesTypesAreValid.some(item => item !== true)) {
+    const wrongTypeFiles = allFiles.filter(item => !props.accept.includes(item.type));
+    handleFileError('invalid-file-format', wrongTypeFiles);
   }
 
   const generatedUrls = [];
@@ -344,6 +342,11 @@ const openSelectFile = (e) => {
   } else {
     e.preventDefault();
   }
+};
+
+// Handles file errors
+const handleFileError = (type, files) => {
+  emit("error", { type: type, files: files });
 };
 
 // Updates local preview state on previews prop change
