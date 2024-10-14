@@ -85,19 +85,14 @@ To capture the error event, you can use the `@error` event handler on the compon
   <Vue3Dropzone v-model="files" @error="handleError" />
 </template>
 
-<script>
-export default {
-  methods: {
-    handleError(error) {
-      // Destructure the error object
-      const { type, files } = error;
+<script setup>
+function handleError(error) {
+  const { type, files } = error;
 
-      if (type === 'file-too-large') {
-        console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
-      } else if (type === 'invalid-file-format') {
-        console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
-      }
-    }
+  if (type === 'file-too-large') {
+    console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
+  } else if (type === 'invalid-file-format') {
+    console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
   }
 }
 </script>
