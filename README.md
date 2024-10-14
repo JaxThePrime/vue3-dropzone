@@ -71,55 +71,6 @@ Local registration:
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
 | `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
 
-## Events
-
-| Prop         | Data Type | Note                                                                                                                          |
-| ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `error`      | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
-| `removeFile` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
-
-### Error Event
-
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @error="handleError" />
-</template>
-
-<script setup>
-function handleError(error) {
-  const { type, files } = error;
-
-  if (type === 'file-too-large') {
-    console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
-  } else if (type === 'invalid-file-format') {
-    console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
-  }
-}
-</script>
-```
-
-### Remove File Event
-
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @removeFile="handleRemoveFile" />
-</template>
-
-<script setup>
-function handleRemoveFile(file) {
-  // Remove the file from the server
-  axios
-    .delete(`/server/path/${file.id}`)
-    .then((response) => {
-      console.log("File successfully deleted from server.");
-    })
-    .catch((error) => {
-      console.error("Error deleting file from server:", error);
-    });
-}
-</script>
-```
-
 ## Server-Side File Upload
 
 To enable the server-side file upload functionality, you can use the following props:
@@ -206,6 +157,63 @@ The preview slot allows for more complex customization of how uploaded files are
     </div>
   </template>
 </Vue3Dropzone>
+```
+
+## Events
+
+| Prop         | Data Type | Note                                                                                                                          |
+| ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `error`      | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
+| `removeFile` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
+
+### Error Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @error="handleError" />
+</template>
+
+<script setup>
+function handleError(error) {
+  const { type, files } = error;
+
+  if (type === "file-too-large") {
+    console.error(
+      `The following files are too large: ${files
+        .map((file) => file.name)
+        .join(", ")}`
+    );
+  } else if (type === "invalid-file-format") {
+    console.error(
+      `The following files are not accepted formats: ${files
+        .map((file) => file.name)
+        .join(", ")}`
+    );
+  }
+}
+</script>
+```
+
+### Remove File Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @removeFile="handleRemoveFile" />
+</template>
+
+<script setup>
+function handleRemoveFile(file) {
+  // Remove the file from the server
+  axios
+    .delete(`/server/path/${file.id}`)
+    .then((response) => {
+      console.log("File successfully deleted from server.");
+    })
+    .catch((error) => {
+      console.error("Error deleting file from server:", error);
+    });
+}
+</script>
 ```
 
 ## Css variables
