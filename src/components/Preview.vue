@@ -4,7 +4,13 @@
     :class="previewWrapperClasses"
     v-if="mode === 'drop'"
   >
-    <slot name="preview" v-for="file in files" :data="file">
+    <slot
+      name="preview"
+      v-for="file in files"
+      :data="file"
+      :formatSize="formatSize"
+      :removeFile="removeFile"
+    >
       <div
         class="preview"
         :class="{

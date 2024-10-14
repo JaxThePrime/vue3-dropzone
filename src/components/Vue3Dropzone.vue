@@ -69,7 +69,16 @@
         :imgHeight="imgHeight"
         :previewWrapperClasses="previewWrapperClasses"
         @removeFile="removeFile"
-      />
+      >
+        <template #preview="{ data, formatSize, removeFile }">
+          <slot
+            name="preview"
+            :data="data"
+            :formatSize="formatSize"
+            :removeFile="removeFile"
+          ></slot>
+        </template>
+      </Preview>
     </div>
     <div
       class="dropzone-wrapper__disabled"
