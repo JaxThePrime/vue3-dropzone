@@ -53,7 +53,7 @@ Local registration:
 ## Props
 
 | Prop                    | Type              | Default   | Note                                                                  |
-|-------------------------|-------------------|-----------|-----------------------------------------------------------------------|
+| ----------------------- | ----------------- | --------- | --------------------------------------------------------------------- |
 | `modelValue`            | `Array`           | []        | 2 way binding ref                                                     |
 | `multiple`              | `Boolean`         | false     | Makes dropzone accept multiple files                                  |
 | `previews`              | `Array`           | []        | Preview images links (works with mode props)                          |
@@ -73,10 +73,8 @@ Local registration:
 ## Events
 
 | Prop    | Data Type | Note                                                                              |
-|---------|-----------|-----------------------------------------------------------------------------------|
+| ------- | --------- | --------------------------------------------------------------------------------- |
 | `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
-
-### Example
 
 To capture the error event, you can use the `@error` event handler on the component. Here is an example of how to implement this:
 
@@ -85,33 +83,60 @@ To capture the error event, you can use the `@error` event handler on the compon
   <Vue3Dropzone v-model="files" @error="handleError" />
 </template>
 
-<script>
-export default {
-  methods: {
-    handleError(error) {
-      // Destructure the error object
-      const { type, files } = error;
+<script setup>
+function handleError(error) {
+  const { type, files } = error;
 
-      if (type === 'file-too-large') {
-        console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
-      } else if (type === 'invalid-file-format') {
-        console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
-      }
-    }
+  if (type === 'file-too-large') {
+    console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
+  } else if (type === 'invalid-file-format') {
+    console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
   }
 }
 </script>
 ```
 
+## Server-Side File Upload
+
+To enable the server-side file upload functionality, you can use the following props:
+
+| Prop          | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `server-side` | `true` or `false`.                                |
+| `endpoint`    | The URL endpoint where the file will be uploaded. |
+| `headers`     | An object that contains any additional headers.   |
+
+```vue
+<template>
+  <Vue3Dropzone
+    v-model="files"
+    :server-side="true"
+    endpoint="http://your-endpoint"
+    :headers="headers"
+  />
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+
+const files = ref([]);
+const headers = computed(() => {
+  return {
+    Authorization: "Bearer " + localStorage.getItem("token"),
+  };
+});
+</script>
+```
+
 ## Slots
 
-| Name              | data        |    
-|-------------------|-------------|
-| `button`          | `fileInput` |
-| `preview`         | `data`      |
-| `description`     | `undefined` |
-| `placeholder-img` | `undefined` |
-| `title`           | `undefined` |
+| Name              | data                             |
+| ----------------- | -------------------------------- |
+| `button`          | `fileInput`                      |
+| `preview`         | `data`,`formatSize`,`removeFile` |
+| `description`     | `undefined`                      |
+| `placeholder-img` | `undefined`                      |
+| `title`           | `undefined`                      |
 
 ## Customizing Slots
 
@@ -130,10 +155,39 @@ You can easily customize the component by overriding the available slots. Below 
 </Vue3Dropzone>
 ```
 
+## Using the Preview Slot
+
+The preview slot allows for more complex customization of how uploaded files are displayed. This slot provides three props: data, formatSize, and removeFile.
+
+### Props
+
+| Prop         | Description                                                         |
+| ------------ | ------------------------------------------------------------------- |
+| `data`       | - `file`: The File object.                                          |
+|              | - `id`: The unique identifier for the file.                         |
+|              | - `src`: The URL or preview of the file.                            |
+|              | - `progress`: The progress of the file upload (percentage).         |
+|              | - `status`: `pending`, `uploading`, `success`, `error`.             |
+|              | - `message`: An error or success message regarding the file upload. |
+| `formatSize` | format the file size (e.g., KB, MB, GB).                            |
+| `removeFile` | remove the uploaded file from the list.                             |
+
+```jsx
+<Vue3Dropzone v-model="files">
+  <template #preview="{ data, formatSize, removeFile }">
+    <div class="your-custom-preview">
+      <h2>{{ data.file.name }}</h2>
+      <span>{{ formatSize(data.file.size) }}</span>
+      <button @click="removeFile(data)">Remove File</button>
+    </div>
+  </template>
+</Vue3Dropzone>
+```
+
 ## Css variables
 
-| Name                             | Value           |    
-|----------------------------------|-----------------|
+| Name                             | Value           |
+| -------------------------------- | --------------- |
 | `--v3-dropzone--primary`         | `94, 112, 210`  |
 | `--v3-dropzone--border`          | `214, 216, 220` |
 | `--v3-dropzone--description`     | `190, 191, 195` |

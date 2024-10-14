@@ -59,85 +59,26 @@
       </template>
 
       <!--   Files previews   -->
-      <template v-else>
-        <div
-          class="preview-container"
-          :class="previewWrapperClasses"
-          v-if="mode === 'drop'"
-        >
-          <slot name="preview" v-for="file in files" :data="file">
-            <div
-              class="preview"
-              :class="{
-                preview__multiple: multiple,
-                preview__file:
-                  file && file.file.type && !file.file.type.includes('image/'),
-              }"
-              :style="{
-                width: `${imgWidth} !important`,
-                height: `${imgHeight} !important`,
-              }"
-            >
-              <img
-                :src="file.src"
-                :alt="file.file.name"
-                v-if="
-                  file && file.file.type && file.file.type.includes('image/')
-                "
-              />
-              <Icon
-                :name="file.file.name.split('.').pop()"
-                v-if="
-                  (file &&
-                    file.file.type &&
-                    !file.file.type.includes('image/')) ||
-                  (file && file.file.type && !file.file.type.includes('video/'))
-                "
-              />
-              <div class="img-details" v-if="file.file.name || file.file.size">
-                <button class="img-remove" @click="removeFile(file)">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="icon icon-tabler icons-tabler-outline icon-tabler-x"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                    <path d="M18 6l-12 12" />
-                    <path d="M6 6l12 12" />
-                  </svg>
-                </button>
-                <h2>{{ file.file.name }}</h2>
-                <span>{{ formatSize(file.file.size) }}</span>
-              </div>
-            </div>
-          </slot>
-        </div>
-        <div
-          class="preview-container"
-          :class="previewWrapperClasses"
-          v-if="mode === 'preview'"
-        >
-          <template v-for="file in previewUrls">
-            <div
-              class="preview"
-              :class="{ preview__multiple: previewUrls.length > 1 }"
-              :style="{
-                width: `${imgWidth} !important`,
-                height: `${imgHeight} !important`,
-              }"
-            >
-              <img :src="file.src" />
-            </div>
-          </template>
-        </div>
-      </template>
+      <Preview
+        v-else
+        :files="files"
+        :previewUrls="previewUrls"
+        :multiple="multiple"
+        :mode="mode"
+        :imgWidth="imgWidth"
+        :imgHeight="imgHeight"
+        :previewWrapperClasses="previewWrapperClasses"
+        @removeFile="removeFile"
+      >
+        <template #preview="{ data, formatSize, removeFile }">
+          <slot
+            name="preview"
+            :data="data"
+            :formatSize="formatSize"
+            :removeFile="removeFile"
+          ></slot>
+        </template>
+      </Preview>
     </div>
     <div
       class="dropzone-wrapper__disabled"
@@ -151,8 +92,8 @@
 
 <script setup>
 import { computed, defineExpose, ref, watchEffect } from "vue";
-import Icon from "./Icon.vue";
 import PlaceholderImage from "./PlaceholderImage.vue";
+import Preview from "./Preview.vue";
 
 const props = defineProps({
   modelValue: {
@@ -368,14 +309,6 @@ const uploadFileToServer = (fileItem) => {
   xhr.send(formData);
 };
 
-// Formats file size
-const formatSize = (size) => {
-  const i = Math.floor(Math.log(size) / Math.log(1024));
-  return (
-    (size / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "KB", "MB", "GB"][i]
-  );
-};
-
 // Toggles active state for dropping files(styles)
 const toggleActive = () => {
   if (!props.disabled && props.mode !== "preview") {
@@ -557,124 +490,5 @@ defineExpose({
 .titles h3 {
   margin-top: 30px;
   font-weight: 400;
-}
-
-.preview-container {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 40px;
-}
-
-.preview {
-  width: 100%;
-  height: 95%;
-  border-radius: 8px;
-  flex-shrink: 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.preview__multiple {
-  height: 90% !important;
-  width: 90% !important;
-}
-
-.preview__file {
-  border: 1px dashed rgba(var(--v3-dropzone--primary));
-}
-
-.preview__file--error {
-  border-color: rgba(var(--v3-dropzone--error)) !important;
-}
-
-.preview:hover .img-details {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
-
-.preview img {
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-}
-
-.img-details {
-  position: absolute;
-  top: 0;
-  inset-inline-start: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(
-    var(--v3-dropzone--overlay),
-    var(--v3-dropzone--overlay-opacity)
-  );
-  border-radius: 8px;
-  transition: all 0.2s linear;
-  -webkit-backdrop-filter: blur(7px);
-  backdrop-filter: blur(7px);
-  filter: grayscale(1%);
-  opacity: 0;
-  visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.img-details h2 {
-  font-size: 14px;
-  font-weight: 400;
-  text-align: center;
-  color: #fff;
-  max-width: 40%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@media (max-width: 400px) {
-  .img-details h2 {
-    max-width: 200px;
-  }
-}
-
-.img-details span {
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-  color: #fff;
-}
-
-.img-remove {
-  background: rgba(var(--v3-dropzone--error));
-  border-radius: 10px;
-  border: none;
-  padding: 5px;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  transition: all 0.2s linear;
-}
-
-.img-remove:active {
-  transform: scale(0.9);
-}
-
-.img-remove:hover {
-  background: rgba(var(--v3-dropzone--error), 0.8);
 }
 </style>
