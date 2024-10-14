@@ -6,7 +6,7 @@
     Customizable easy to use dropzone | <strong>Only supported for vue3</strong>
     <br>
     <br>
-    <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
+    <a href="https://vue-dropzone-preview.vercel.app/" target="_blank"><strong>Demo</strong></a>
   </p>
 </div>
 
@@ -14,9 +14,10 @@
 
 the features of this package include the following:
 
+- Drag and drop upload files
 - Highly customizable
 - Lightweight, powerful and easy to use <g-emoji class="g-emoji" alias="smile"
-- Provides with image preview, multiple state like error success and disable, etc...
+- Provides with file preview, server-side uploads, multiple state like error success and disable, etc...
 
 # Installation
 
