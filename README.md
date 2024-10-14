@@ -76,8 +76,6 @@ Local registration:
 | ------- | --------- | --------------------------------------------------------------------------------- |
 | `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
 
-### Example
-
 To capture the error event, you can use the `@error` event handler on the component. Here is an example of how to implement this:
 
 ```vue
@@ -95,6 +93,38 @@ function handleError(error) {
     console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
   }
 }
+</script>
+```
+
+## Server-Side File Upload
+
+To enable the server-side file upload functionality, you can use the following props:
+
+| Prop          | Description                                       |
+| ------------- | ------------------------------------------------- |
+| `server-side` | `true` or `false`.                                |
+| `endpoint`    | The URL endpoint where the file will be uploaded. |
+| `headers`     | An object that contains any additional headers.   |
+
+```vue
+<template>
+  <Vue3Dropzone
+    v-model="files"
+    :server-side="true"
+    endpoint="http://your-endpoint"
+    :headers="headers"
+  />
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+
+const files = ref([]);
+const headers = computed(() => {
+  return {
+    Authorization: "Bearer " + localStorage.getItem("token"),
+  };
+});
 </script>
 ```
 
@@ -137,7 +167,7 @@ The preview slot allows for more complex customization of how uploaded files are
 |              | - `id`: The unique identifier for the file.                         |
 |              | - `src`: The URL or preview of the file.                            |
 |              | - `progress`: The progress of the file upload (percentage).         |
-|              | - `status`: `pending`, `uploading`, `success`, or `error`.          |
+|              | - `status`: `pending`, `uploading`, `success`, `error`.             |
 |              | - `message`: An error or success message regarding the file upload. |
 | `formatSize` | format the file size (e.g., KB, MB, GB).                            |
 | `removeFile` | remove the uploaded file from the list.                             |
