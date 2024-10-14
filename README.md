@@ -53,7 +53,7 @@ Local registration:
 ## Props
 
 | Prop                    | Type              | Default   | Note                                                                  |
-|-------------------------|-------------------|-----------|-----------------------------------------------------------------------|
+| ----------------------- | ----------------- | --------- | --------------------------------------------------------------------- |
 | `modelValue`            | `Array`           | []        | 2 way binding ref                                                     |
 | `multiple`              | `Boolean`         | false     | Makes dropzone accept multiple files                                  |
 | `previews`              | `Array`           | []        | Preview images links (works with mode props)                          |
@@ -73,7 +73,7 @@ Local registration:
 ## Events
 
 | Prop    | Data Type | Note                                                                              |
-|---------|-----------|-----------------------------------------------------------------------------------|
+| ------- | --------- | --------------------------------------------------------------------------------- |
 | `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
 
 ### Example
@@ -100,13 +100,13 @@ function handleError(error) {
 
 ## Slots
 
-| Name              | data        |    
-|-------------------|-------------|
-| `button`          | `fileInput` |
-| `preview`         | `data`      |
-| `description`     | `undefined` |
-| `placeholder-img` | `undefined` |
-| `title`           | `undefined` |
+| Name              | data                             |
+| ----------------- | -------------------------------- |
+| `button`          | `fileInput`                      |
+| `preview`         | `data`,`formatSize`,`removeFile` |
+| `description`     | `undefined`                      |
+| `placeholder-img` | `undefined`                      |
+| `title`           | `undefined`                      |
 
 ## Customizing Slots
 
@@ -125,10 +125,39 @@ You can easily customize the component by overriding the available slots. Below 
 </Vue3Dropzone>
 ```
 
+## Using the Preview Slot
+
+The preview slot allows for more complex customization of how uploaded files are displayed. This slot provides three props: data, formatSize, and removeFile.
+
+### Props
+
+| Prop         | Description                                                         |
+| ------------ | ------------------------------------------------------------------- |
+| `data`       | - `file`: The File object.                                          |
+|              | - `id`: The unique identifier for the file.                         |
+|              | - `src`: The URL or preview of the file.                            |
+|              | - `progress`: The progress of the file upload (percentage).         |
+|              | - `status`: `pending`, `uploading`, `success`, or `error`.          |
+|              | - `message`: An error or success message regarding the file upload. |
+| `formatSize` | format the file size (e.g., KB, MB, GB).                            |
+| `removeFile` | remove the uploaded file from the list.                             |
+
+```jsx
+<Vue3Dropzone v-model="files">
+  <template #preview="{ data, formatSize, removeFile }">
+    <div class="your-custom-preview">
+      <h2>{{ data.file.name }}</h2>
+      <span>{{ formatSize(data.file.size) }}</span>
+      <button @click="removeFile(data)">Remove File</button>
+    </div>
+  </template>
+</Vue3Dropzone>
+```
+
 ## Css variables
 
-| Name                             | Value           |    
-|----------------------------------|-----------------|
+| Name                             | Value           |
+| -------------------------------- | --------------- |
 | `--v3-dropzone--primary`         | `94, 112, 210`  |
 | `--v3-dropzone--border`          | `214, 216, 220` |
 | `--v3-dropzone--description`     | `190, 191, 195` |
