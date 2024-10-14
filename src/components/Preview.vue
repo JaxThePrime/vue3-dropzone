@@ -51,6 +51,20 @@
           <h2>{{ file.file.name }}</h2>
           <span>{{ formatSize(file.file.size) }}</span>
         </div>
+        <div
+          class="progress-bar-container"
+          v-if="file.status === 'pending' || file.status === 'uploading'"
+        >
+          <div
+            class="progress-bar"
+            :aria-valuenow="file.progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :style="{ width: `${file.progress}%` }"
+          >
+            {{ file.progress }}%
+          </div>
+        </div>
       </div>
     </slot>
   </div>
@@ -237,5 +251,25 @@ const removeFile = (item) => {
 
 .img-remove:hover {
   background: rgba(var(--v3-dropzone--error), 0.8);
+}
+
+.progress-bar-container {
+  position: absolute;
+  bottom: 0;
+  background-color: #666;
+  border-radius: 5px;
+  overflow: hidden;
+  width: 100%;
+  height: 10px;
+}
+.progress-bar {
+  height: 100%;
+  background-color: rgba(var(--v3-dropzone--primary));
+  text-align: center;
+  font-size: 10px;
+  line-height: 10px;
+  color: #fff;
+  width: 0;
+  transition: width 0.5s ease-in-out;
 }
 </style>
