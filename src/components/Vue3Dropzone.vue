@@ -163,7 +163,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const emit = defineEmits(["drop", "update:modelValue", "error"]);
+const emit = defineEmits(["drop", "update:modelValue", "error", "removeFile"]);
 
 const fileInput = ref(null);
 const files = ref([]);
@@ -335,6 +335,7 @@ const removeFile = (item) => {
   previewUrls.value = previewUrls.value.filter((url) => url.id !== item.id);
   files.value = files.value.filter((file) => file.id !== item.id);
   fileInput.value.value = "";
+  emit("removeFile", item);
   emit("update:modelValue", files.value);
 };
 

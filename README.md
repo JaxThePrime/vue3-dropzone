@@ -72,11 +72,12 @@ Local registration:
 
 ## Events
 
-| Prop    | Data Type | Note                                                                              |
-| ------- | --------- | --------------------------------------------------------------------------------- |
-| `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
+| Prop         | Data Type | Note                                                                                                                          |
+| ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `error`      | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
+| `removeFile` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
 
-To capture the error event, you can use the `@error` event handler on the component. Here is an example of how to implement this:
+### Error Event
 
 ```vue
 <template>
@@ -92,6 +93,28 @@ function handleError(error) {
   } else if (type === 'invalid-file-format') {
     console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
   }
+}
+</script>
+```
+
+### Remove File Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @removeFile="handleRemoveFile" />
+</template>
+
+<script setup>
+function handleRemoveFile(file) {
+  // Remove the file from the server
+  axios
+    .delete(`/server/path/${file.id}`)
+    .then((response) => {
+      console.log("File successfully deleted from server.");
+    })
+    .catch((error) => {
+      console.error("Error deleting file from server:", error);
+    });
 }
 </script>
 ```
