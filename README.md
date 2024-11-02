@@ -81,6 +81,7 @@ To enable the server-side file upload functionality, you can use the following p
 | ----------------- | ------------------------------------------------- |
 | `server-side`     | `true` or `false`.                                |
 | `upload-endpoint` | The URL endpoint where the file will be uploaded. |
+| `delete-endpoint` | The URL endpoint where the file will be deleted.  |
 | `headers`         | An object that contains any additional headers.   |
 
 ```vue
@@ -89,6 +90,7 @@ To enable the server-side file upload functionality, you can use the following p
     v-model="files"
     :server-side="true"
     upload-endpoint="http://your-upload-endpoint"
+    delete-endpoint="http://your-delete-endpoint"
     :headers="headers"
   />
 </template>
@@ -163,10 +165,11 @@ The preview slot allows for more complex customization of how uploaded files are
 
 ## Events
 
-| Prop          | Data Type | Note                                                                                                                          |
-| ------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `error`       | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
-| `fileRemoved` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
+| Prop           | Data Type | Note                                                                                                                          |
+| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
+| `fileUploaded` | `Object`  | Emits when a file is uploaded, The event provides the file data so you can handle upload to the server as well as locally.    |
+| `fileRemoved`  | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
 
 ### Error Event
 
@@ -196,6 +199,21 @@ function handleError(error) {
 </script>
 ```
 
+### File Uploaded Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @fileUploaded="handleFileUploaded" />
+</template>
+
+<script setup>
+function handleFileUploaded(file) {
+  // Do something with the uploaded file
+  console.log("File uploaded:", file);
+}
+</script>
+```
+
 ### File Removed Event
 
 ```vue
@@ -205,15 +223,8 @@ function handleError(error) {
 
 <script setup>
 function handleFileRemoved(file) {
-  // Remove the file from the server
-  axios
-    .delete(`/server/path/${file.id}`)
-    .then((response) => {
-      console.log("File successfully deleted from server.");
-    })
-    .catch((error) => {
-      console.error("Error deleting file from server:", error);
-    });
+  // Do something with the removed file
+  console.log("File removed:", file);
 }
 </script>
 ```
