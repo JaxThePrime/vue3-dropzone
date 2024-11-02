@@ -264,8 +264,8 @@ const inputFiles = (e) => {
   previewUrls.value = generatedUrls;
 };
 
-// Upload client
-const uploadClient = () => {
+// Server-Side client
+const serverSideClient = () => {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", props.uploadEndpoint, true);
   Object.keys(props.headers).forEach((key) => {
@@ -276,7 +276,7 @@ const uploadClient = () => {
 
 // Upload file to server
 const uploadFileToServer = (fileItem) => {
-  const xhr = uploadClient();
+  const xhr = serverSideClient();
   const formData = new FormData();
   formData.append("file", fileItem.file);
 
