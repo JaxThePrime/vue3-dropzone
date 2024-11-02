@@ -59,26 +59,13 @@
       </template>
 
       <!--   Files previews   -->
-      <Preview
-        v-else
-        :files="files"
-        :previewUrls="previewUrls"
-        :multiple="multiple"
-        :mode="mode"
-        :imgWidth="imgWidth"
-        :imgHeight="imgHeight"
-        :previewWrapperClasses="previewWrapperClasses"
-        @removeFile="removeFile"
-      >
-        <template #preview="{ data, formatSize, removeFile }">
-          <slot
-            name="preview"
-            :data="data"
-            :formatSize="formatSize"
-            :removeFile="removeFile"
-          ></slot>
-        </template>
-      </Preview>
+      <template v-else>
+        <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
+          <template #preview="previewProps">
+            <slot name="preview" v-bind="previewProps"></slot>
+          </template>
+        </PreviewSlot>
+      </template>
     </div>
     <div
       class="dropzone-wrapper__disabled"
@@ -93,7 +80,7 @@
 <script setup>
 import { computed, defineExpose, ref, watchEffect } from "vue";
 import PlaceholderImage from "./PlaceholderImage.vue";
-import Preview from "./Preview.vue";
+import PreviewSlot from "./PreviewSlot.vue";
 
 const props = defineProps({
   modelValue: {
@@ -169,6 +156,17 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const previewProps = computed(() => ({
+  files: files.value,
+  previewUrls: previewUrls.value,
+  multiple: props.multiple,
+  mode: props.mode,
+  imgWidth: props.imgWidth,
+  imgHeight: props.imgHeight,
+  previewWrapperClasses: props.previewWrapperClasses,
+}));
+
 const emit = defineEmits([
   "drop",
   "update:modelValue",
