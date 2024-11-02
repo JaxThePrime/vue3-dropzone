@@ -55,23 +55,24 @@ Local registration:
 
 ## Props
 
-| Prop                    | Type              | Default   | Note                                                                  |
-| ----------------------- | ----------------- | --------- | --------------------------------------------------------------------- |
-| `modelValue`            | `Array`           | []        | 2 way binding ref                                                     |
-| `multiple`              | `Boolean`         | false     | Makes dropzone accept multiple files                                  |
-| `previews`              | `Array`           | []        | Preview images links (works with mode props)                          |
-| `mode`                  | `string`          | drop      | Defines dropzone functionality to accept drops or just preview images |
-| `disabled`              | `Boolean`         | false     | Disables the whole dropzone                                           |
-| `accept`                | `String`          | undefined | Accepted type of files                                                |
-| `maxFileSize`           | `Number`          | 5         | Max file size in Megabytes                                            |
-| `maxFiles`              | `Number`          | 5         | Max files accepted by dropzone                                        |
-| `width`                 | `Number` `String` | undefined | Dropzone container width                                              |
-| `height`                | `Number` `String` | undefined | Dropzone container height                                             |
-| `imgWidth`              | `Number` `String` | undefined | Preview images width                                                  |
-| `imgHeight`             | `Number` `String` | undefined | Preview images height                                                 |
-| `previewWrapperClasses` | `String`          | undefined | Preview images container classes                                      |
-| `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
-| `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
+| Prop                    | Type              | Default         | Note                                                                  |
+| ----------------------- | ----------------- | --------------- | --------------------------------------------------------------------- |
+| `modelValue`            | `Array`           | []              | 2 way binding ref                                                     |
+| `multiple`              | `Boolean`         | false           | Makes dropzone accept multiple files                                  |
+| `previews`              | `Array`           | []              | Preview images links (works with mode props)                          |
+| `mode`                  | `string`          | drop            | Defines dropzone functionality to accept drops or just preview images |
+| `disabled`              | `Boolean`         | false           | Disables the whole dropzone                                           |
+| `accept`                | `String`          | undefined       | Accepted type of files                                                |
+| `maxFileSize`           | `Number`          | 5               | Max file size in Megabytes                                            |
+| `maxFiles`              | `Number`          | 5               | Max files accepted by dropzone                                        |
+| `width`                 | `Number` `String` | undefined       | Dropzone container width                                              |
+| `height`                | `Number` `String` | undefined       | Dropzone container height                                             |
+| `imgWidth`              | `Number` `String` | undefined       | Preview images width                                                  |
+| `imgHeight`             | `Number` `String` | undefined       | Preview images height                                                 |
+| `previewWrapperClasses` | `String`          | undefined       | Preview images container classes                                      |
+| `previewPosition`       | `String`          | inside, outside | Preview images position                                               |
+| `showSelectButton`      | `Boolean`         | true            | Select files button in the dropzone                                   |
+| `selectFileStrategy`    | `String`          | 'replace'       | Defines selecting file strategy (replace, merge)                      |
 
 ## Server-Side File Upload
 

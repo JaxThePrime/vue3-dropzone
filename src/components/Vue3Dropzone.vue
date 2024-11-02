@@ -20,7 +20,7 @@
       @click.self="openSelectFile"
       id="dropzoneWrapper"
     >
-      <!--   Input   -->
+      <!-- Input -->
       <input
         type="file"
         ref="fileInput"
@@ -31,8 +31,8 @@
         :multiple="multiple"
       />
 
-      <!--   Placeholder content   -->
-      <template v-if="!previewUrls.length">
+      <!-- Placeholder content -->
+      <template v-if="!previewUrls.length || previewPosition === 'outside'">
         <slot name="placeholder-img">
           <PlaceholderImage />
         </slot>
@@ -58,27 +58,16 @@
         </slot>
       </template>
 
-      <!--   Files previews   -->
-      <Preview
-        v-else
-        :files="files"
-        :previewUrls="previewUrls"
-        :multiple="multiple"
-        :mode="mode"
-        :imgWidth="imgWidth"
-        :imgHeight="imgHeight"
-        :previewWrapperClasses="previewWrapperClasses"
+      <!-- Files previews inside -->
+      <PreviewSlot
+        v-if="previewPosition === 'inside'"
+        v-bind="previewProps"
         @removeFile="removeFile"
       >
-        <template #preview="{ data, formatSize, removeFile }">
-          <slot
-            name="preview"
-            :data="data"
-            :formatSize="formatSize"
-            :removeFile="removeFile"
-          ></slot>
+        <template #preview="previewProps">
+          <slot name="preview" v-bind="previewProps"></slot>
         </template>
-      </Preview>
+      </PreviewSlot>
     </div>
     <div
       class="dropzone-wrapper__disabled"
@@ -87,13 +76,22 @@
       @dragover.prevent
       v-if="disabled"
     ></div>
+
+    <!-- Files previews outside -->
+    <div class="mt-5" v-if="previewPosition === 'outside'">
+      <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
+        <template #preview="previewProps">
+          <slot name="preview" v-bind="previewProps"></slot>
+        </template>
+      </PreviewSlot>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { computed, defineExpose, ref, watchEffect } from "vue";
 import PlaceholderImage from "./PlaceholderImage.vue";
-import Preview from "./Preview.vue";
+import PreviewSlot from "./PreviewSlot.vue";
 
 const props = defineProps({
   modelValue: {
@@ -140,6 +138,11 @@ const props = defineProps({
   imgHeight: [Number, String],
   fileInputId: String,
   previewWrapperClasses: String,
+  previewPosition: {
+    type: String,
+    default: "inside",
+    validator: (value) => ["inside", "outside"].includes(value),
+  },
   showSelectButton: {
     type: Boolean,
     default: true,
@@ -169,6 +172,17 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+const previewProps = computed(() => ({
+  files: files.value,
+  previewUrls: previewUrls.value,
+  multiple: props.multiple,
+  mode: props.mode,
+  imgWidth: props.imgWidth,
+  imgHeight: props.imgHeight,
+  previewWrapperClasses: props.previewWrapperClasses,
+}));
+
 const emit = defineEmits([
   "drop",
   "update:modelValue",
@@ -444,6 +458,10 @@ defineExpose({
 
 .m-0 {
   margin: 0;
+}
+
+.mt-5 {
+  margin-top: 3rem;
 }
 
 .dropzone {
