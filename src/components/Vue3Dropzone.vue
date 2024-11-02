@@ -20,7 +20,7 @@
       @click.self="openSelectFile"
       id="dropzoneWrapper"
     >
-      <!--   Input   -->
+      <!-- Input -->
       <input
         type="file"
         ref="fileInput"
@@ -31,8 +31,8 @@
         :multiple="multiple"
       />
 
-      <!--   Placeholder content   -->
-      <template v-if="!previewUrls.length">
+      <!-- Placeholder content -->
+      <template v-if="!previewUrls.length || previewPosition === 'outside'">
         <slot name="placeholder-img">
           <PlaceholderImage />
         </slot>
@@ -58,14 +58,16 @@
         </slot>
       </template>
 
-      <!--   Files previews   -->
-      <template v-else>
-        <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
-          <template #preview="previewProps">
-            <slot name="preview" v-bind="previewProps"></slot>
-          </template>
-        </PreviewSlot>
-      </template>
+      <!-- Files previews inside -->
+      <PreviewSlot
+        v-if="previewPosition === 'inside'"
+        v-bind="previewProps"
+        @removeFile="removeFile"
+      >
+        <template #preview="previewProps">
+          <slot name="preview" v-bind="previewProps"></slot>
+        </template>
+      </PreviewSlot>
     </div>
     <div
       class="dropzone-wrapper__disabled"
@@ -74,6 +76,15 @@
       @dragover.prevent
       v-if="disabled"
     ></div>
+
+    <!-- Files previews outside -->
+    <div class="mt-5" v-if="previewPosition === 'outside'">
+      <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
+        <template #preview="previewProps">
+          <slot name="preview" v-bind="previewProps"></slot>
+        </template>
+      </PreviewSlot>
+    </div>
   </div>
 </template>
 
@@ -127,6 +138,11 @@ const props = defineProps({
   imgHeight: [Number, String],
   fileInputId: String,
   previewWrapperClasses: String,
+  previewPosition: {
+    type: String,
+    default: "inside",
+    validator: (value) => ["inside", "outside"].includes(value),
+  },
   showSelectButton: {
     type: Boolean,
     default: true,
@@ -442,6 +458,10 @@ defineExpose({
 
 .m-0 {
   margin: 0;
+}
+
+.mt-5 {
+  margin-top: 3rem;
 }
 
 .dropzone {
