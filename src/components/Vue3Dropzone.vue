@@ -152,7 +152,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  endpoint: {
+  uploadEndpoint: {
+    type: String,
+    required(props) {
+      return props.serverSide;
+    },
+  },
+  deleteEndpoint: {
     type: String,
     required(props) {
       return props.serverSide;
@@ -163,7 +169,13 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const emit = defineEmits(["drop", "update:modelValue", "error"]);
+const emit = defineEmits([
+  "drop",
+  "update:modelValue",
+  "error",
+  "fileUploaded",
+  "fileRemoved",
+]);
 
 const fileInput = ref(null);
 const files = ref([]);
@@ -258,19 +270,16 @@ const inputFiles = (e) => {
   previewUrls.value = generatedUrls;
 };
 
-// Upload client
-const uploadClient = () => {
+// Upload file to server
+const uploadFileToServer = (fileItem) => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", props.endpoint, true);
+  xhr.open("POST", props.uploadEndpoint, true);
+
+  // Set headers
   Object.keys(props.headers).forEach((key) => {
     xhr.setRequestHeader(key, props.headers[key]);
   });
-  return xhr;
-};
 
-// Upload file to server
-const uploadFileToServer = (fileItem) => {
-  const xhr = uploadClient();
   const formData = new FormData();
   formData.append("file", fileItem.file);
 
@@ -292,9 +301,11 @@ const uploadFileToServer = (fileItem) => {
     if (xhr.status === 200) {
       fileItem.status = "success";
       fileItem.message = "File uploaded successfully";
+      emit("fileUploaded", { file: fileItem });
     } else {
       fileItem.status = "error";
       fileItem.message = xhr.statusText;
+      handleFileError("upload-error", [fileItem.file]);
     }
   };
 
@@ -332,9 +343,42 @@ const drop = (e) => {
 
 // Removes file from files list
 const removeFile = (item) => {
+  if (props.serverSide) {
+    removeFileFromServer(item);
+  } else {
+    removeFileFromList(item);
+  }
+};
+
+const removeFileFromServer = (item) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `${props.deleteEndpoint}/${item.id}`, true);
+
+  // Set headers
+  Object.keys(props.headers).forEach((key) => {
+    xhr.setRequestHeader(key, props.headers[key]);
+  });
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      removeFileFromList(item);
+    } else {
+      handleFileError("delete-error", [item]);
+    }
+  };
+
+  xhr.onerror = () => {
+    handleFileError("delete-error", [item]);
+  };
+
+  xhr.send();
+};
+
+const removeFileFromList = (item) => {
   previewUrls.value = previewUrls.value.filter((url) => url.id !== item.id);
   files.value = files.value.filter((file) => file.id !== item.id);
   fileInput.value.value = "";
+  emit("fileRemoved", item);
   emit("update:modelValue", files.value);
 };
 

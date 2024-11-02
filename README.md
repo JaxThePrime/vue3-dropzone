@@ -1,4 +1,6 @@
-<article ><a name="user-content-readme-top"></a></p>
+<article>
+
+<a name="user-content-readme-top"></a></p>
 
 <div align="center">
   <h1 align="center"></a>Vue 3 dropzone component</h1>
@@ -14,9 +16,10 @@
 
 the features of this package include the following:
 
+- Drag and drop upload files
 - Highly customizable
 - Lightweight, powerful and easy to use <g-emoji class="g-emoji" alias="smile"
-- Provides with image preview, multiple state like error success and disable, etc...
+- Provides with file preview, server-side uploads, multiple state like error success and disable, etc...
 
 # Installation
 
@@ -70,48 +73,24 @@ Local registration:
 | `showSelectButton`      | `Boolean`         | true      | Select files button in the dropzone                                   |
 | `selectFileStrategy`    | `String`          | 'replace' | Defines selecting file strategy (replace, merge)                      |
 
-## Events
-
-| Prop    | Data Type | Note                                                                              |
-| ------- | --------- | --------------------------------------------------------------------------------- |
-| `error` | `Array`   | Emits the error event and also provides data to know which files caused the error |
-
-To capture the error event, you can use the `@error` event handler on the component. Here is an example of how to implement this:
-
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @error="handleError" />
-</template>
-
-<script setup>
-function handleError(error) {
-  const { type, files } = error;
-
-  if (type === 'file-too-large') {
-    console.error(`The following files are too large: ${files.map(file => file.name).join(', ')}`);
-  } else if (type === 'invalid-file-format') {
-    console.error(`The following files are not accepted formats: ${files.map(file => file.name).join(', ')}`);
-  }
-}
-</script>
-```
-
 ## Server-Side File Upload
 
 To enable the server-side file upload functionality, you can use the following props:
 
-| Prop          | Description                                       |
-| ------------- | ------------------------------------------------- |
-| `server-side` | `true` or `false`.                                |
-| `endpoint`    | The URL endpoint where the file will be uploaded. |
-| `headers`     | An object that contains any additional headers.   |
+| Prop              | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `server-side`     | `true` or `false`.                                |
+| `upload-endpoint` | The URL endpoint where the file will be uploaded. |
+| `delete-endpoint` | The URL endpoint where the file will be deleted.  |
+| `headers`         | An object that contains any additional headers.   |
 
 ```vue
 <template>
   <Vue3Dropzone
     v-model="files"
     :server-side="true"
-    endpoint="http://your-endpoint"
+    upload-endpoint="http://your-upload-endpoint"
+    delete-endpoint="http://your-delete-endpoint"
     :headers="headers"
   />
 </template>
@@ -182,6 +161,72 @@ The preview slot allows for more complex customization of how uploaded files are
     </div>
   </template>
 </Vue3Dropzone>
+```
+
+## Events
+
+| Prop           | Data Type | Note                                                                                                                          |
+| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
+| `fileUploaded` | `Object`  | Emits when a file is uploaded, The event provides the file data so you can handle upload to the server as well as locally.    |
+| `fileRemoved`  | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
+
+### Error Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @error="handleError" />
+</template>
+
+<script setup>
+function handleError(error) {
+  const { type, files } = error;
+
+  if (type === "file-too-large") {
+    console.error(
+      `The following files are too large: ${files
+        .map((file) => file.name)
+        .join(", ")}`
+    );
+  } else if (type === "invalid-file-format") {
+    console.error(
+      `The following files are not accepted formats: ${files
+        .map((file) => file.name)
+        .join(", ")}`
+    );
+  }
+}
+</script>
+```
+
+### File Uploaded Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @fileUploaded="handleFileUploaded" />
+</template>
+
+<script setup>
+function handleFileUploaded(file) {
+  // Do something with the uploaded file
+  console.log("File uploaded:", file);
+}
+</script>
+```
+
+### File Removed Event
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" @fileRemoved="handleFileRemoved" />
+</template>
+
+<script setup>
+function handleFileRemoved(file) {
+  // Do something with the removed file
+  console.log("File removed:", file);
+}
+</script>
 ```
 
 ## Css variables
