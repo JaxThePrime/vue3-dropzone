@@ -158,6 +158,12 @@ const props = defineProps({
       return props.serverSide;
     },
   },
+  deleteEndpoint: {
+    type: String,
+    required(props) {
+      return props.serverSide;
+    },
+  },
   headers: {
     type: Object,
     default: () => ({}),
@@ -264,19 +270,16 @@ const inputFiles = (e) => {
   previewUrls.value = generatedUrls;
 };
 
-// Server-Side client
-const serverSideClient = () => {
+// Upload file to server
+const uploadFileToServer = (fileItem) => {
   const xhr = new XMLHttpRequest();
   xhr.open("POST", props.uploadEndpoint, true);
+
+  // Set headers
   Object.keys(props.headers).forEach((key) => {
     xhr.setRequestHeader(key, props.headers[key]);
   });
-  return xhr;
-};
 
-// Upload file to server
-const uploadFileToServer = (fileItem) => {
-  const xhr = serverSideClient();
   const formData = new FormData();
   formData.append("file", fileItem.file);
 
@@ -340,6 +343,38 @@ const drop = (e) => {
 
 // Removes file from files list
 const removeFile = (item) => {
+  if (props.serverSide) {
+    removeFileFromServer(item);
+  } else {
+    removeFileFromList(item);
+  }
+};
+
+const removeFileFromServer = (item) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("DELETE", `${props.deleteEndpoint}/${item.id}`, true);
+
+  // Set headers
+  Object.keys(props.headers).forEach((key) => {
+    xhr.setRequestHeader(key, props.headers[key]);
+  });
+
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      removeFileFromList(item);
+    } else {
+      handleFileError("delete-error", [item]);
+    }
+  };
+
+  xhr.onerror = () => {
+    handleFileError("delete-error", [item]);
+  };
+
+  xhr.send();
+};
+
+const removeFileFromList = (item) => {
   previewUrls.value = previewUrls.value.filter((url) => url.id !== item.id);
   files.value = files.value.filter((file) => file.id !== item.id);
   fileInput.value.value = "";
