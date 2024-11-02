@@ -1,4 +1,6 @@
-<article ><a name="user-content-readme-top"></a></p>
+<article>
+
+<a name="user-content-readme-top"></a></p>
 
 <div align="center">
   <h1 align="center"></a>Vue 3 dropzone component</h1>
@@ -6,7 +8,7 @@
     Customizable easy to use dropzone | <strong>Only supported for vue3</strong>
     <br>
     <br>
-    <a href="https://vue-dropzone-preview.vercel.app/" target="_blank"><strong>Demo</strong></a>
+    <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
   </p>
 </div>
 
@@ -75,18 +77,18 @@ Local registration:
 
 To enable the server-side file upload functionality, you can use the following props:
 
-| Prop          | Description                                       |
-| ------------- | ------------------------------------------------- |
-| `server-side` | `true` or `false`.                                |
-| `endpoint`    | The URL endpoint where the file will be uploaded. |
-| `headers`     | An object that contains any additional headers.   |
+| Prop              | Description                                       |
+| ----------------- | ------------------------------------------------- |
+| `server-side`     | `true` or `false`.                                |
+| `upload-endpoint` | The URL endpoint where the file will be uploaded. |
+| `headers`         | An object that contains any additional headers.   |
 
 ```vue
 <template>
   <Vue3Dropzone
     v-model="files"
     :server-side="true"
-    endpoint="http://your-endpoint"
+    upload-endpoint="http://your-upload-endpoint"
     :headers="headers"
   />
 </template>

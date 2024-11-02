@@ -152,7 +152,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  endpoint: {
+  uploadEndpoint: {
     type: String,
     required(props) {
       return props.serverSide;
@@ -261,7 +261,7 @@ const inputFiles = (e) => {
 // Upload client
 const uploadClient = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", props.endpoint, true);
+  xhr.open("POST", props.uploadEndpoint, true);
   Object.keys(props.headers).forEach((key) => {
     xhr.setRequestHeader(key, props.headers[key]);
   });
