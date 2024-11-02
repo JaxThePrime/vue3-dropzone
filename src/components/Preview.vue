@@ -95,7 +95,6 @@
 </template>
 
 <script setup>
-import { defineExpose, ref, watchEffect } from "vue";
 import Icon from "./Icon.vue";
 
 const props = defineProps({

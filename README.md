@@ -161,10 +161,10 @@ The preview slot allows for more complex customization of how uploaded files are
 
 ## Events
 
-| Prop         | Data Type | Note                                                                                                                          |
-| ------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `error`      | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
-| `removeFile` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
+| Prop          | Data Type | Note                                                                                                                          |
+| ------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `error`       | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
+| `fileRemoved` | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
 
 ### Error Event
 
@@ -194,15 +194,15 @@ function handleError(error) {
 </script>
 ```
 
-### Remove File Event
+### File Removed Event
 
 ```vue
 <template>
-  <Vue3Dropzone v-model="files" @removeFile="handleRemoveFile" />
+  <Vue3Dropzone v-model="files" @fileRemoved="handleFileRemoved" />
 </template>
 
 <script setup>
-function handleRemoveFile(file) {
+function handleFileRemoved(file) {
   // Remove the file from the server
   axios
     .delete(`/server/path/${file.id}`)
