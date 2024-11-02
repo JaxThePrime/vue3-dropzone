@@ -302,6 +302,7 @@ const uploadFileToServer = (fileItem) => {
     } else {
       fileItem.status = "error";
       fileItem.message = xhr.statusText;
+      handleFileError("upload-error", [fileItem.file]);
     }
   };
 
