@@ -145,26 +145,28 @@ const removeFile = (item) => {
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 40px;
 }
 
 .preview {
   width: 100%;
-  height: 95%;
+  height: 100%;
   border-radius: 8px;
   flex-shrink: 0;
   position: relative;
   display: flex;
   align-items: center;
+  flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .preview__multiple {
-  height: 90% !important;
-  width: 90% !important;
+  height: 150px;
+  width: 150px;
 }
 
 .preview__file {
@@ -184,6 +186,7 @@ const removeFile = (item) => {
   width: 100%;
   height: 100%;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .img-details {
