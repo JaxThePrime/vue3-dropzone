@@ -163,7 +163,13 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const emit = defineEmits(["drop", "update:modelValue", "error", "fileRemoved"]);
+const emit = defineEmits([
+  "drop",
+  "update:modelValue",
+  "error",
+  "fileUploaded",
+  "fileRemoved",
+]);
 
 const fileInput = ref(null);
 const files = ref([]);
@@ -292,6 +298,7 @@ const uploadFileToServer = (fileItem) => {
     if (xhr.status === 200) {
       fileItem.status = "success";
       fileItem.message = "File uploaded successfully";
+      emit("fileUploaded", { file: fileItem });
     } else {
       fileItem.status = "error";
       fileItem.message = xhr.statusText;
