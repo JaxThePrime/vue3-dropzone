@@ -258,14 +258,19 @@ const inputFiles = (e) => {
     handleFileError("invalid-file-format", wrongTypeFiles);
   }
 
-  // Upload files to server
-  if (props.serverSide) {
-    files.value
-      .filter((fileItem) => fileItem.status !== "success")
-      .forEach((fileItem) => {
+  files.value
+    .filter((fileItem) => fileItem.status !== "success")
+    .forEach((fileItem) => {
+      // Upload files to server
+      if (props.serverSide) {
         uploadFileToServer(fileItem);
-      });
-  }
+      } else {
+        fileItem.progress = 100;
+        fileItem.status = "success";
+        fileItem.message = "File uploaded successfully";
+        emit("fileUploaded", { file: fileItem });
+      }
+    });
 
   const generatedUrls = [];
 
