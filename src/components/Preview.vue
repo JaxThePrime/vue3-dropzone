@@ -1,36 +1,36 @@
 <template>
   <div
-    class="preview-container"
-    :class="previewWrapperClasses"
-    v-if="mode === 'drop'"
+      class="preview-container"
+      :class="previewWrapperClasses"
+      v-if="mode === 'drop'"
   >
     <slot
-      name="preview"
-      v-for="file in files"
-      :data="file"
-      :formatSize="formatSize"
-      :removeFile="removeFile"
+        name="preview"
+        v-for="file in files"
+        :data="file"
+        :formatSize="formatSize"
+        :removeFile="removeFileBuiltIn"
     >
       <div
-        class="preview"
-        :class="{
+          class="preview"
+          :class="{
           preview__multiple: multiple,
           preview__file:
             file && file.file.type && !file.file.type.includes('image/'),
         }"
-        :style="{
+          :style="{
           width: `${imgWidth} !important`,
           height: `${imgHeight} !important`,
         }"
       >
         <img
-          :src="file.src"
-          :alt="file.file.name"
-          v-if="file && file.file.type && file.file.type.includes('image/')"
+            :src="file.src"
+            :alt="file.file.name"
+            v-if="file && file.file.type && file.file.type.includes('image/')"
         />
         <Icon
-          :name="file.file.name.split('.').pop()"
-          v-if="
+            :name="file.file.name.split('.').pop()"
+            v-if="
             (file && file.file.type && !file.file.type.includes('image/')) ||
             (file && file.file.type && !file.file.type.includes('video/'))
           "
@@ -38,35 +38,35 @@
         <div class="img-details" v-if="file.file.name || file.file.size">
           <button class="img-remove" @click="removeFile(file)">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-x"
             >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M18 6l-12 12" />
-              <path d="M6 6l12 12" />
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M18 6l-12 12"/>
+              <path d="M6 6l12 12"/>
             </svg>
           </button>
           <h2>{{ file.file.name }}</h2>
           <span>{{ formatSize(file.file.size) }}</span>
         </div>
         <div
-          class="progress-bar-container"
-          v-if="file.status === 'pending' || file.status === 'uploading'"
+            class="progress-bar-container"
+            v-if="file.status === 'pending' || file.status === 'uploading'"
         >
           <div
-            class="progress-bar"
-            :aria-valuenow="file.progress"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            :style="{ width: `${file.progress}%` }"
+              class="progress-bar"
+              :aria-valuenow="file.progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              :style="{ width: `${file.progress}%` }"
           >
             {{ file.progress }}%
           </div>
@@ -75,20 +75,20 @@
     </slot>
   </div>
   <div
-    class="preview-container"
-    :class="previewWrapperClasses"
-    v-if="mode === 'preview'"
+      class="preview-container"
+      :class="previewWrapperClasses"
+      v-if="mode === 'preview'"
   >
     <template v-for="file in previewUrls">
       <div
-        class="preview"
-        :class="{ preview__multiple: previewUrls.length > 1 }"
-        :style="{
+          class="preview"
+          :class="{ preview__multiple: previewUrls.length > 1 }"
+          :style="{
           width: `${imgWidth} !important`,
           height: `${imgHeight} !important`,
         }"
       >
-        <img :src="file.src" />
+        <img :src="file.src"/>
       </div>
     </template>
   </div>
@@ -120,6 +120,7 @@ const props = defineProps({
   imgWidth: [Number, String],
   imgHeight: [Number, String],
   previewWrapperClasses: String,
+  removeFileBuiltIn: Function
 });
 
 const emit = defineEmits(["removeFile"]);
@@ -128,7 +129,7 @@ const emit = defineEmits(["removeFile"]);
 const formatSize = (size) => {
   const i = Math.floor(Math.log(size) / Math.log(1024));
   return (
-    (size / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "KB", "MB", "GB"][i]
+      (size / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "KB", "MB", "GB"][i]
   );
 };
 
@@ -196,8 +197,8 @@ const removeFile = (item) => {
   width: 100%;
   height: 100%;
   background: rgba(
-    var(--v3-dropzone--overlay),
-    var(--v3-dropzone--overlay-opacity)
+      var(--v3-dropzone--overlay),
+      var(--v3-dropzone--overlay-opacity)
   );
   border-radius: 8px;
   transition: all 0.2s linear;

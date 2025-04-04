@@ -1,40 +1,40 @@
 <template>
   <div class="dropzone">
     <div
-      class="dropzone-wrapper"
-      :style="{ width, height }"
-      @dragenter.prevent="toggleActive"
-      @dragleave.prevent="toggleActive"
-      @drop.prevent="drop"
-      @dragover.prevent
-      @mouseover="hover"
-      @mouseleave="blurDrop"
-      :class="[
+        class="dropzone-wrapper"
+        :style="{ width, height }"
+        @dragenter.prevent="toggleActive"
+        @dragleave.prevent="toggleActive"
+        @drop.prevent="drop"
+        @dragover.prevent
+        @mouseover="hover"
+        @mouseleave="blurDrop"
+        :class="[
         {
           'dropzone-wrapper--active': active,
           'dropzone-wrapper--disabled': disabled,
         },
         state ? `dropzone-wrapper--${state}` : '',
       ]"
-      ref="dropzoneWrapper"
-      @click.self="openSelectFile"
-      id="dropzoneWrapper"
+        ref="dropzoneWrapper"
+        @click.self="openSelectFile"
+        id="dropzoneWrapper"
     >
       <!-- Input -->
       <input
-        type="file"
-        ref="fileInput"
-        class="hidden"
-        :id="fileInputId"
-        :accept="accept"
-        @input="inputFiles"
-        :multiple="multiple"
+          type="file"
+          ref="fileInput"
+          class="hidden"
+          :id="fileInputId"
+          :accept="accept"
+          @input="inputFiles"
+          :multiple="multiple"
       />
 
       <!-- Placeholder content -->
       <template v-if="!previewUrls.length || previewPosition === 'outside'">
         <slot name="placeholder-img">
-          <PlaceholderImage />
+          <PlaceholderImage/>
         </slot>
         <slot name="title">
           <div class="titles">
@@ -43,9 +43,9 @@
         </slot>
         <slot name="button" :fileInput="fileInput">
           <button
-            @click="fileInput?.click()"
-            v-if="showSelectButton"
-            class="select-file"
+              @click="fileInput?.click()"
+              v-if="showSelectButton"
+              class="select-file"
           >
             Select File
           </button>
@@ -60,9 +60,9 @@
 
       <!-- Files previews inside -->
       <PreviewSlot
-        v-if="previewPosition === 'inside'"
-        v-bind="previewProps"
-        @removeFile="removeFile"
+          v-if="previewPosition === 'inside'"
+          v-bind="previewProps"
+          @removeFile="removeFile"
       >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -70,11 +70,11 @@
       </PreviewSlot>
     </div>
     <div
-      class="dropzone-wrapper__disabled"
-      @click.prevent
-      @drop.prevent
-      @dragover.prevent
-      v-if="disabled"
+        class="dropzone-wrapper__disabled"
+        @click.prevent
+        @drop.prevent
+        @dragover.prevent
+        v-if="disabled"
     ></div>
 
     <!-- Files previews outside -->
@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import { computed, defineExpose, ref, watchEffect } from "vue";
+import {computed, defineExpose, ref, watchEffect} from "vue";
 import PlaceholderImage from "./PlaceholderImage.vue";
 import PreviewSlot from "./PreviewSlot.vue";
 
@@ -181,6 +181,7 @@ const previewProps = computed(() => ({
   imgWidth: props.imgWidth,
   imgHeight: props.imgHeight,
   previewWrapperClasses: props.previewWrapperClasses,
+  removeFileBuiltIn: removeFile
 }));
 
 const emit = defineEmits([
@@ -221,10 +222,10 @@ const inputFiles = (e) => {
   });
 
   if (
-    (filesSizesAreValid.every((item) => item === true) &&
-      props.accept &&
-      filesTypesAreValid.every((item) => item === true)) ||
-    filesSizesAreValid.every((item) => item === true)
+      (filesSizesAreValid.every((item) => item === true) &&
+          props.accept &&
+          filesTypesAreValid.every((item) => item === true)) ||
+      filesSizesAreValid.every((item) => item === true)
   ) {
     const processFile = (file) => ({
       file: file,
@@ -253,24 +254,24 @@ const inputFiles = (e) => {
 
   if (props.accept && filesTypesAreValid.some((item) => item !== true)) {
     const wrongTypeFiles = allFiles.filter(
-      (item) => !props.accept.includes(item.type)
+        (item) => !props.accept.includes(item.type)
     );
     handleFileError("invalid-file-format", wrongTypeFiles);
   }
 
   files.value
-    .filter((fileItem) => fileItem.status !== "success")
-    .forEach((fileItem) => {
-      // Upload files to server
-      if (props.serverSide) {
-        uploadFileToServer(fileItem);
-      } else {
-        fileItem.progress = 100;
-        fileItem.status = "success";
-        fileItem.message = "File uploaded successfully";
-        emit("fileUploaded", { file: fileItem });
-      }
-    });
+      .filter((fileItem) => fileItem.status !== "success")
+      .forEach((fileItem) => {
+        // Upload files to server
+        if (props.serverSide) {
+          uploadFileToServer(fileItem);
+        } else {
+          fileItem.progress = 100;
+          fileItem.status = "success";
+          fileItem.message = "File uploaded successfully";
+          emit("fileUploaded", {file: fileItem});
+        }
+      });
 
   const generatedUrls = [];
 
@@ -282,8 +283,8 @@ const inputFiles = (e) => {
       size: item.file.size,
       type: item.file.type,
       isTypeAccepted: props.accept
-        ? props.accept.includes(item.file.type)
-        : undefined,
+          ? props.accept.includes(item.file.type)
+          : undefined,
     });
   });
   previewUrls.value = generatedUrls;
@@ -320,7 +321,7 @@ const uploadFileToServer = (fileItem) => {
     if (xhr.status === 200) {
       fileItem.status = "success";
       fileItem.message = "File uploaded successfully";
-      emit("fileUploaded", { file: fileItem });
+      emit("fileUploaded", {file: fileItem});
     } else {
       fileItem.status = "error";
       fileItem.message = xhr.statusText;
@@ -414,9 +415,9 @@ const blurDrop = () => {
 // Opens os selecting file window
 const openSelectFile = (e) => {
   if (
-    !props.disabled &&
-    props.mode === "drop" &&
-    e.target.id === "dropzoneWrapper"
+      !props.disabled &&
+      props.mode === "drop" &&
+      e.target.id === "dropzoneWrapper"
   ) {
     fileInput.value.click();
   } else {
@@ -426,7 +427,7 @@ const openSelectFile = (e) => {
 
 // Handles file errors
 const handleFileError = (type, files) => {
-  emit("error", { type: type, files: files });
+  emit("error", {type: type, files: files});
 };
 
 // Updates local preview state on previews prop change
