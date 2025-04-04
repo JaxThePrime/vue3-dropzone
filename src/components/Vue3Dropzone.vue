@@ -157,15 +157,9 @@ const props = defineProps({
   },
   uploadEndpoint: {
     type: String,
-    required(props) {
-      return props.serverSide;
-    },
   },
   deleteEndpoint: {
     type: String,
-    required(props) {
-      return props.serverSide;
-    },
   },
   headers: {
     type: Object,
@@ -293,7 +287,7 @@ const inputFiles = (e) => {
 // Upload file to server
 const uploadFileToServer = (fileItem) => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", props.uploadEndpoint, true);
+  xhr.open("POST", props.uploadEndpoint || '', true);
 
   // Set headers
   Object.keys(props.headers).forEach((key) => {
@@ -372,7 +366,7 @@ const removeFile = (item) => {
 
 const removeFileFromServer = (item) => {
   const xhr = new XMLHttpRequest();
-  xhr.open("DELETE", `${props.deleteEndpoint}/${item.id}`, true);
+  xhr.open("DELETE", props.deleteEndpoint ? `${props.deleteEndpoint}/${item.id}` : '', true);
 
   // Set headers
   Object.keys(props.headers).forEach((key) => {
