@@ -60,7 +60,7 @@
 
       <!-- Files previews inside -->
       <PreviewSlot
-          v-if="previewPosition === 'inside'"
+          v-if="previewPosition === 'inside' && previewProps.files.length"
           v-bind="previewProps"
           @removeFile="removeFile"
       >
@@ -78,7 +78,7 @@
     ></div>
 
     <!-- Files previews outside -->
-    <div class="mt-5" v-if="previewPosition === 'outside'">
+    <div class="mt-5" v-if="previewPosition === 'outside' && previewProps.files.length">
       <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -89,7 +89,7 @@
 </template>
 
 <script setup>
-import {computed, defineExpose, ref, watchEffect} from "vue";
+import {computed, ref, watchEffect} from "vue";
 import PlaceholderImage from "./PlaceholderImage.vue";
 import PreviewSlot from "./PreviewSlot.vue";
 
