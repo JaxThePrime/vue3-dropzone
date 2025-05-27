@@ -1,10 +1,7 @@
 <template>
   <div class="app" style="width: 478px; height: 200px">
-    <Vue3Dropzone v-model="files" accept="image/png">
-      <template #preview="{ data,removeFile}">
-        <img :src="data.src" alt="" class="w-full h-full">
-        <button @click="removeFile(data)">remove</button>
-      </template>
+    <Vue3Dropzone v-model="files">
+
     </Vue3Dropzone>
   </div>
 </template>

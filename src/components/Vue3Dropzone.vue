@@ -60,7 +60,7 @@
 
       <!-- Files previews inside -->
       <PreviewSlot
-          v-if="previewPosition === 'inside' && previewProps.files.length"
+          v-if="previewPosition === 'inside' && previewProps.files.length || previews && previews.length"
           v-bind="previewProps"
           @removeFile="removeFile"
       >
@@ -78,7 +78,7 @@
     ></div>
 
     <!-- Files previews outside -->
-    <div class="mt-5" v-if="previewPosition === 'outside' && previewProps.files.length">
+    <div class="mt-5" v-if="previewPosition === 'outside' && previewProps.files.length || previews && previews.length">
       <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
