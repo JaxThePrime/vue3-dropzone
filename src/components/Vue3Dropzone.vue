@@ -10,12 +10,12 @@
         @mouseover="hover"
         @mouseleave="blurDrop"
         :class="[
-        {
-          'dropzone-wrapper--active': active,
-          'dropzone-wrapper--disabled': disabled,
-        },
-        state ? `dropzone-wrapper--${state}` : '',
-      ]"
+          {
+            'dropzone-wrapper--active': active,
+            'dropzone-wrapper--disabled': disabled,
+          },
+          state ? `dropzone-wrapper--${state}` : '',
+        ]"
         ref="dropzoneWrapper"
         @click.self="openSelectFile"
         id="dropzoneWrapper"
@@ -122,6 +122,7 @@ const props = defineProps({
     validator(value) {
       return ["error", "success", "indeterminate"].includes(value);
     },
+    default: 'indeterminate'
   },
   accept: String,
   maxFileSize: {
@@ -219,7 +220,7 @@ const inputFiles = (e) => {
       (filesSizesAreValid.every((item) => item === true) &&
           props.accept &&
           filesTypesAreValid.every((item) => item === true)) ||
-      filesSizesAreValid.every((item) => item === true)
+      !props.accept && filesSizesAreValid.every((item) => item === true)
   ) {
     const processFile = (file) => ({
       file: file,
