@@ -1,6 +1,7 @@
 # Vue3 Dropzone
 
 A flexible Vue 3 dropzone component with unified preview and edit capabilities. Perfect for file uploads, image galleries, and product management interfaces.
+<a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
 
 ## 🎯 Key Features
 
