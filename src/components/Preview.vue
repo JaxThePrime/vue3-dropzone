@@ -2,12 +2,12 @@
   <div
       class="preview-container"
       :class="previewWrapperClasses"
-      v-if="mode === 'drop'"
   >
     <slot
         name="preview"
-        v-for="file in files"
-        :data="file"
+        v-for="item in files"
+        :key="item.id"
+        :data="item"
         :formatSize="formatSize"
         :removeFile="removeFileBuiltIn"
     >
@@ -15,28 +15,37 @@
           class="preview"
           :class="{
           preview__multiple: multiple,
-          preview__file:
-            file && file.file.type && !file.file.type.includes('image/'),
+          preview__file: item.type === 'file' && item.file && item.file.type && !item.file.type.includes('image/'),
         }"
           :style="{
           width: `${imgWidth} !important`,
           height: `${imgHeight} !important`,
         }"
+        @click.stop
       >
+        <!-- For actual File objects -->
         <img
-            :src="file.src"
-            :alt="file.file.name"
-            v-if="file && file.file.type && file.file.type.includes('image/')"
+            :src="item.src"
+            :alt="item.name || (item.file && item.file.name)"
+            v-if="item.type === 'file' && item.file && item.file.type && item.file.type.includes('image/')"
         />
+        
+        <!-- For URL previews -->
+        <img
+            :src="item.src"
+            :alt="item.name"
+            v-if="item.type === 'url'"
+        />
+        
+        <!-- File type icon for non-images -->
         <Icon
-            :name="file.file.name.split('.').pop()"
-            v-if="
-            (file && file.file.type && !file.file.type.includes('image/')) ||
-            (file && file.file.type && !file.file.type.includes('video/'))
-          "
+            :name="item.file ? item.file.name.split('.').pop() : 'file'"
+            v-if="item.type === 'file' && item.file && item.file.type && (!item.file.type.includes('image/') && !item.file.type.includes('video/'))"
         />
-        <div class="img-details" v-if="file.file.name || file.file.size">
-          <button class="img-remove" @click="removeFile(file)">
+        
+        <!-- File details overlay -->
+        <div class="img-details" v-if="allowSelectOnPreview && mode !== 'preview'">
+          <button class="img-remove" @click="removeFile(item)">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -54,43 +63,27 @@
               <path d="M6 6l12 12"/>
             </svg>
           </button>
-          <h2>{{ file.file.name }}</h2>
-          <span>{{ formatSize(file.file.size) }}</span>
+          <h2 v-if="item.name || (item.file && item.file.name)">{{ item.name || item.file.name }}</h2>
+          <span v-if="item.size || (item.file && item.file.size)">{{ formatSize(item.size || item.file.size) }}</span>
         </div>
+        
+        <!-- Progress bar for file uploads -->
         <div
             class="progress-bar-container"
-            v-if="file.status === 'pending' || file.status === 'uploading'"
+            v-if="item.type === 'file' && (item.status === 'pending' || item.status === 'uploading')"
         >
           <div
               class="progress-bar"
-              :aria-valuenow="file.progress"
+              :aria-valuenow="item.progress"
               aria-valuemin="0"
               aria-valuemax="100"
-              :style="{ width: `${file.progress}%` }"
+              :style="{ width: `${item.progress}%` }"
           >
-            {{ file.progress }}%
+            {{ item.progress }}%
           </div>
         </div>
       </div>
     </slot>
-  </div>
-  <div
-      class="preview-container"
-      :class="previewWrapperClasses"
-      v-if="mode === 'preview'"
-  >
-    <template v-for="file in previewUrls">
-      <div
-          class="preview"
-          :class="{ preview__multiple: previewUrls.length > 1 }"
-          :style="{
-          width: `${imgWidth} !important`,
-          height: `${imgHeight} !important`,
-        }"
-      >
-        <img :src="file.src"/>
-      </div>
-    </template>
   </div>
 </template>
 
@@ -104,7 +97,7 @@ const props = defineProps({
   },
   previewUrls: {
     type: Array,
-    default: [],
+    default: [], // Legacy prop, kept for backward compatibility
   },
   multiple: {
     type: Boolean,
@@ -114,9 +107,10 @@ const props = defineProps({
     type: String,
     default: "drop",
     validator(value) {
-      return ["drop", "preview"].includes(value);
+      return ["drop", "preview", "edit"].includes(value);
     },
   },
+  allowSelectOnPreview: Boolean,
   imgWidth: [Number, String],
   imgHeight: [Number, String],
   previewWrapperClasses: String,
@@ -127,6 +121,7 @@ const emit = defineEmits(["removeFile"]);
 
 // Formats file size
 const formatSize = (size) => {
+  if (!size) return "Unknown size";
   const i = Math.floor(Math.log(size) / Math.log(1024));
   return (
       (size / Math.pow(1024, i)).toFixed(2) * 1 + " " + ["B", "KB", "MB", "GB"][i]

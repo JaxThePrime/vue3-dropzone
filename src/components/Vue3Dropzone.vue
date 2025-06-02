@@ -32,7 +32,7 @@
       />
 
       <!-- Placeholder content -->
-      <template v-if="!previewUrls.length || previewPosition === 'outside'">
+      <template v-if="!unifiedItems.length || previewPosition === 'outside'">
         <slot name="placeholder-img">
           <PlaceholderImage/>
         </slot>
@@ -60,9 +60,12 @@
 
       <!-- Files previews inside -->
       <PreviewSlot
-          v-if="previewPosition === 'inside' && previewProps.files.length || previews && previews.length"
+          v-if="previewPosition === 'inside' && unifiedItems.length"
           v-bind="previewProps"
           @removeFile="removeFile"
+          @click="openSelectFile"
+          @mouseover="hover"
+          @mouseleave="blurDrop"
       >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -78,8 +81,15 @@
     ></div>
 
     <!-- Files previews outside -->
-    <div class="mt-5" v-if="previewPosition === 'outside' && previewProps.files.length || previews && previews.length">
-      <PreviewSlot v-bind="previewProps" @removeFile="removeFile">
+    <div class="mt-5"
+         v-if="previewPosition === 'outside' && unifiedItems.length">
+      <PreviewSlot 
+        v-bind="previewProps" 
+        @removeFile="removeFile"
+        @click="openSelectFile"
+        @mouseover="hover"
+        @mouseleave="blurDrop"
+      >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
         </template>
@@ -110,7 +120,7 @@ const props = defineProps({
     type: String,
     default: "drop",
     validator(value) {
-      return ["drop", "preview"].includes(value);
+      return ["drop", "preview", "edit"].includes(value);
     },
   },
   disabled: {
@@ -151,6 +161,7 @@ const props = defineProps({
   selectFileStrategy: {
     type: String,
     default: "replace",
+    validator: (value) => ["replace", "merge"].includes(value),
   },
   serverSide: {
     type: Boolean,
@@ -166,13 +177,53 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  allowSelectOnPreview: {
+    type: Boolean,
+    default: true
+  }
+});
+
+// Unified data structure that combines both File objects and URL previews
+const unifiedItems = computed(() => {
+  const items = [];
+  
+  // Add preview URLs first (existing images)
+  if (props.previews && props.previews.length) {
+    props.previews.forEach((url, index) => {
+      items.push({
+        id: `preview-${index}`,
+        src: url,
+        type: 'url',
+        isPreview: true,
+        name: `Image ${index + 1}`,
+        size: 0,
+        progress: 100,
+        status: 'success',
+        message: null
+      });
+    });
+  }
+  
+  // Add actual file objects
+  if (files.value && files.value.length) {
+    files.value.forEach(fileItem => {
+      items.push({
+        ...fileItem,
+        type: 'file',
+        isPreview: false
+      });
+    });
+  }
+  
+  return items;
 });
 
 const previewProps = computed(() => ({
-  files: files.value,
-  previewUrls: previewUrls.value,
+  files: unifiedItems.value,
+  previewUrls: [], // Legacy prop, no longer used
   multiple: props.multiple,
   mode: props.mode,
+  allowSelectOnPreview: props.mode !== "preview" || props.allowSelectOnPreview,
   imgWidth: props.imgWidth,
   imgHeight: props.imgHeight,
   previewWrapperClasses: props.previewWrapperClasses,
@@ -182,20 +233,25 @@ const previewProps = computed(() => ({
 const emit = defineEmits([
   "drop",
   "update:modelValue",
+  "update:previews",
   "error",
   "fileUploaded",
   "fileRemoved",
+  "previewRemoved",
 ]);
 
 const fileInput = ref(null);
 const files = ref([]);
-const previewUrls = ref([]);
 const active = ref(false);
 const dropzoneWrapper = ref(null);
 const fileInputId = computed(() => {
   if (props.fileInputId) return props.fileInputId;
   return generateFileId();
 });
+
+const fileInputAllowed = computed(() => {
+  return !props.disabled && (props.mode === "drop" || (props.mode === "preview" && props.allowSelectOnPreview) || props.mode === "edit")
+})
 
 const generateFileId = () => {
   return Math.floor(Math.random() * Math.floor(Math.random() * Date.now()));
@@ -208,7 +264,6 @@ const inputFiles = (e) => {
     const itemSize = (item.size / 1024 / 1024).toFixed(2);
     return itemSize <= props.maxFileSize;
   });
-
   const filesTypesAreValid = allFiles.map((item) => {
     if (props.accept) {
       return props.accept.includes(item.type);
@@ -229,12 +284,23 @@ const inputFiles = (e) => {
       progress: 0,
       status: "pending",
       message: null,
+      name: file.name,
+      size: file.size,
+      type: 'file',
+      isPreview: false
     });
 
-    if (props.selectFileStrategy === "replace") {
+    // Use selectFileStrategy for all modes
+    const strategy = props.selectFileStrategy;
+
+    if (strategy === "replace") {
       files.value = allFiles.map(processFile);
+      // In edit mode, also clear previews if replacing
+      if (props.mode === "edit") {
+        emit("update:previews", []);
+      }
     }
-    if (props.selectFileStrategy === "merge") {
+    if (strategy === "merge") {
       files.value = [...files.value, ...allFiles.map(processFile)];
     }
   }
@@ -267,22 +333,6 @@ const inputFiles = (e) => {
           emit("fileUploaded", {file: fileItem});
         }
       });
-
-  const generatedUrls = [];
-
-  files.value.map((item) => {
-    generatedUrls.push({
-      id: item.id,
-      src: URL.createObjectURL(item.file),
-      name: item.file.name,
-      size: item.file.size,
-      type: item.file.type,
-      isTypeAccepted: props.accept
-          ? props.accept.includes(item.file.type)
-          : undefined,
-    });
-  });
-  previewUrls.value = generatedUrls;
 };
 
 // Upload file to server
@@ -337,7 +387,7 @@ const uploadFileToServer = (fileItem) => {
 
 // Toggles active state for dropping files(styles)
 const toggleActive = () => {
-  if (!props.disabled && props.mode !== "preview") {
+  if (fileInputAllowed.value) {
     active.value = !active.value;
   }
 };
@@ -345,7 +395,7 @@ const toggleActive = () => {
 // Handles dropped files and input them
 const drop = (e) => {
   toggleActive();
-  if (!props.disabled && props.mode !== "preview") {
+  if (fileInputAllowed.value) {
     const files = {
       target: {
         files: [...e.dataTransfer.files],
@@ -356,12 +406,22 @@ const drop = (e) => {
   }
 };
 
-// Removes file from files list
+// Enhanced removeFile to handle both types
 const removeFile = (item) => {
-  if (props.serverSide) {
-    removeFileFromServer(item);
+  if (item.type === 'url' || item.isPreview) {
+    // Remove from previews array
+    const currentPreviews = [...props.previews];
+    const previewIndex = parseInt(item.id.replace('preview-', ''));
+    currentPreviews.splice(previewIndex, 1);
+    emit("update:previews", currentPreviews);
+    emit("previewRemoved", item);
   } else {
-    removeFileFromList(item);
+    // Handle file removal
+    if (props.serverSide) {
+      removeFileFromServer(item);
+    } else {
+      removeFileFromList(item);
+    }
   }
 };
 
@@ -390,7 +450,6 @@ const removeFileFromServer = (item) => {
 };
 
 const removeFileFromList = (item) => {
-  previewUrls.value = previewUrls.value.filter((url) => url.id !== item.id);
   files.value = files.value.filter((file) => file.id !== item.id);
   fileInput.value.value = "";
   emit("fileRemoved", item);
@@ -399,7 +458,7 @@ const removeFileFromList = (item) => {
 
 // Hover and blur manager
 const hover = () => {
-  if (!files.value.length && props.state === "indeterminate") {
+  if (fileInputAllowed.value) {
     active.value = true;
   }
 };
@@ -409,12 +468,15 @@ const blurDrop = () => {
 
 // Opens os selecting file window
 const openSelectFile = (e) => {
-  if (
-      !props.disabled &&
-      props.mode === "drop" &&
-      e.target.id === "dropzoneWrapper"
-  ) {
-    fileInput.value.click();
+  if (fileInputAllowed.value) {
+    // Allow clicks on the dropzone wrapper itself or preview containers
+    if (
+      e.target.id === "dropzoneWrapper" || 
+      e.target.classList.contains('preview-container') ||
+      e.currentTarget.classList.contains('preview-container')
+    ) {
+      fileInput.value.click();
+    }
   } else {
     e.preventDefault();
   }
@@ -425,18 +487,6 @@ const handleFileError = (type, files) => {
   emit("error", {type: type, files: files});
 };
 
-// Updates local preview state on previews prop change
-watchEffect(() => {
-  if (props.previews && props.previews.length) {
-    previewUrls.value = props.previews.map((item) => {
-      return {
-        src: item,
-        id: generateFileId(),
-      };
-    });
-  }
-});
-
 watchEffect(() => {
   if (files.value && files.value.length) {
     emit("update:modelValue", files.value);
@@ -444,11 +494,29 @@ watchEffect(() => {
 });
 
 const clearPreview = () => {
-  previewUrls.value.forEach((file) => removeFile(file));
+  unifiedItems.value.forEach((item) => removeFile(item));
+};
+
+// Public methods for programmatic control
+const clearFiles = () => {
+  files.value = [];
+  emit("update:modelValue", []);
+};
+
+const clearPreviews = () => {
+  emit("update:previews", []);
+};
+
+const clearAll = () => {
+  clearFiles();
+  clearPreviews();
 };
 
 defineExpose({
   clearPreview,
+  clearFiles,
+  clearPreviews,
+  clearAll,
 });
 </script>
 
