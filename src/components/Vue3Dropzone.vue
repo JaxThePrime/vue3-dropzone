@@ -63,9 +63,9 @@
           v-if="previewPosition === 'inside' && unifiedItems.length"
           v-bind="previewProps"
           @removeFile="removeFile"
-          @click="openSelectFile"
-          @mouseover="hover"
-          @mouseleave="blurDrop"
+          @click="fileInputAllowed ? openSelectFile : undefined"
+          @mouseover="fileInputAllowed ? hover : undefined"
+          @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -86,9 +86,9 @@
       <PreviewSlot 
         v-bind="previewProps" 
         @removeFile="removeFile"
-        @click="openSelectFile"
-        @mouseover="hover"
-        @mouseleave="blurDrop"
+        @click="fileInputAllowed ? openSelectFile : undefined"
+        @mouseover="fileInputAllowed ? hover : undefined"
+        @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -179,7 +179,7 @@ const props = defineProps({
   },
   allowSelectOnPreview: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 

@@ -1,251 +1,179 @@
-<article>
+# Vue3 Dropzone
 
-<a name="user-content-readme-top"></a></p>
+A flexible Vue 3 dropzone component with unified preview and edit capabilities. Perfect for file uploads, image galleries, and product management interfaces.
 
-<div align="center">
-  <h1 align="center"></a>Vue 3 dropzone component</h1>
-  <p align="center">
-    Customizable easy to use dropzone | <strong>Only supported for vue3</strong>
-    <br>
-    <br>
-    <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
-  </p>
-</div>
+## 🎯 Key Features
 
-# About the Project
+### **Unified Data Handling**
+- **Multiple Data Sources**: Combines File objects (new uploads) with URL strings (existing files)
+- **Smart Type Detection**: Automatically handles different file types and sources
+- **Two-Way Binding**: Reactive updates for both new files and existing previews
 
-the features of this package include the following:
+### **Three Flexible Modes**
+- **Drop Mode**: Standard dropzone for new file selection
+- **Preview Mode**: Display existing files with optional interaction
+- **Edit Mode**: Combined functionality - show existing files AND allow modifications
 
-- Drag and drop upload files
-- Highly customizable
-- Lightweight, powerful and easy to use <g-emoji class="g-emoji" alias="smile"
-- Provides with file preview, server-side uploads, multiple state like error success and disable, etc...
+### **File Management**
+- **Drag & Drop Support**: Native HTML5 drag and drop with visual feedback
+- **File Validation**: Size limits, type restrictions, and custom validation
+- **Progress Tracking**: Built-in upload progress with server-side support
+- **Error Handling**: Comprehensive error states and user feedback
 
-# Installation
+### **Layout Options**
+- **Preview Positioning**: Display previews inside or outside the dropzone
+- **Responsive Design**: Adapts to different screen sizes and containers
+- **Customizable Styling**: CSS variables for easy theming
+- **Slot Support**: Override any part of the interface
 
-- Install Yarn package
+## 📋 Props Reference
 
-```bash
-yarn add @jaxtheprime/vue3-dropzone
-```
+### **Core Configuration**
 
-- Install NPM package
+| Prop         | Type      | Default  | Description                                                                                                        |
+|--------------|-----------|----------|--------------------------------------------------------------------------------------------------------------------|
+| `modelValue` | `Array`   | `[]`     | Array of File objects representing newly selected files. Two-way binding with v-model.                             |
+| `previews`   | `Array`   | `[]`     | Array of URL strings for existing files/images. Two-way binding with v-model:previews.                             |
+| `mode`       | `String`  | `"drop"` | Component behavior mode: `"drop"` (new files only), `"preview"` (display only), `"edit"` (combined functionality). |
+| `multiple`   | `Boolean` | `false`  | Allow selection of multiple files simultaneously.                                                                  |
+| `disabled`   | `Boolean` | `false`  | Completely disable all interactions with the dropzone.                                                             |
 
-```bash
-npm install @jaxtheprime/vue3-dropzone
-```
+### **File Selection & Strategy**
 
-## Usage
+| Prop                   | Type      | Default     | Description                                                                                           |
+|------------------------|-----------|-------------|-------------------------------------------------------------------------------------------------------|
+| `selectFileStrategy`   | `String`  | `"replace"` | How new files interact with existing ones: `"replace"` (clear existing), `"merge"` (add to existing). |
+| `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection when in preview mode. When false, preview mode is read-only.                     |
+| `maxFiles`             | `Number`  | `5`         | Maximum number of files that can be selected at once.                                                 |
+| `maxFileSize`          | `Number`  | `5`         | Maximum file size allowed in megabytes (MB).                                                          |
+| `accept`               | `String`  | `undefined` | Comma-separated list of allowed file types (MIME types). Example: "image/*,application/pdf".          |
 
-Local registration:
+### **Visual Layout & Positioning**
 
-```jsx
-<template>
-    <Vue3Dropzone v-model="files"/>
-</template>
+| Prop                    | Type            | Default    | Description                                                                                 |
+|-------------------------|-----------------|------------|---------------------------------------------------------------------------------------------|
+| `width`                 | `Number/String` | `auto`     | Width of the dropzone container. Can be px, %, or any CSS unit.                             |
+| `height`                | `Number/String` | `200px`    | Height of the dropzone container. Can be px, %, or any CSS unit.                            |
+| `previewPosition`       | `String`        | `"inside"` | Where to display file previews: `"inside"` (within dropzone), `"outside"` (below dropzone). |
+| `imgWidth`              | `Number/String` | `auto`     | Width of individual preview images.                                                         |
+| `imgHeight`             | `Number/String` | `auto`     | Height of individual preview images.                                                        |
+| `previewWrapperClasses` | `String`        | `""`       | Additional CSS classes to apply to the preview container.                                   |
 
-<script>
-    import Vue3Dropzone from "@jaxtheprime/vue3-dropzone";
-    import '@jaxtheprime/vue3-dropzone/dist/style.css'
+### **User Interface Elements**
 
-    const files = ref([])
-    };
-</script>
-```
+| Prop               | Type      | Default           | Description                                                                                     |
+|--------------------|-----------|-------------------|-------------------------------------------------------------------------------------------------|
+| `showSelectButton` | `Boolean` | `true`            | Display the "Select File" button within the dropzone interface.                                 |
+| `fileInputId`      | `String`  | `auto-generated`  | Custom ID for the hidden file input element. Auto-generated if not provided.                    |
+| `state`            | `String`  | `"indeterminate"` | Visual state of the dropzone: `"indeterminate"`, `"success"`, `"error"`. Affects border colors. |
 
-## Props
+### **Server Integration**
 
-| Prop                    | Type              | Default         | Note                                                                  |
-| ----------------------- | ----------------- | --------------- | --------------------------------------------------------------------- |
-| `modelValue`            | `Array`           | []              | 2 way binding ref                                                     |
-| `multiple`              | `Boolean`         | false           | Makes dropzone accept multiple files                                  |
-| `previews`              | `Array`           | []              | Preview images links (works with mode props)                          |
-| `mode`                  | `string`          | drop            | Defines dropzone functionality to accept drops or just preview images |
-| `disabled`              | `Boolean`         | false           | Disables the whole dropzone                                           |
-| `accept`                | `String`          | undefined       | Accepted type of files                                                |
-| `maxFileSize`           | `Number`          | 5               | Max file size in Megabytes                                            |
-| `maxFiles`              | `Number`          | 5               | Max files accepted by dropzone                                        |
-| `width`                 | `Number` `String` | undefined       | Dropzone container width                                              |
-| `height`                | `Number` `String` | undefined       | Dropzone container height                                             |
-| `imgWidth`              | `Number` `String` | undefined       | Preview images width                                                  |
-| `imgHeight`             | `Number` `String` | undefined       | Preview images height                                                 |
-| `previewWrapperClasses` | `String`          | undefined       | Preview images container classes                                      |
-| `previewPosition`       | `String`          | inside, outside | Preview images position                                               |
-| `showSelectButton`      | `Boolean`         | true            | Select files button in the dropzone                                   |
-| `selectFileStrategy`    | `String`          | 'replace'       | Defines selecting file strategy (replace, merge)                      |
+| Prop             | Type      | Default     | Description                                                          |
+|------------------|-----------|-------------|----------------------------------------------------------------------|
+| `serverSide`     | `Boolean` | `false`     | Enable server-side file upload functionality with progress tracking. |
+| `uploadEndpoint` | `String`  | `undefined` | URL endpoint for file uploads when serverSide is enabled.            |
+| `deleteEndpoint` | `String`  | `undefined` | URL endpoint for file deletion when serverSide is enabled.           |
+| `headers`        | `Object`  | `{}`        | Additional HTTP headers to send with server requests.                |
 
-## Server-Side File Upload
+## 🔄 Events Reference
 
-To enable the server-side file upload functionality, you can use the following props:
+| Event               | Payload  | Description                                                                     |
+|---------------------|----------|---------------------------------------------------------------------------------|
+| `update:modelValue` | `Array`  | Emitted when the files array changes. Contains File objects.                    |
+| `update:previews`   | `Array`  | Emitted when the previews array changes. Contains URL strings.                  |
+| `drop`              | `Event`  | Emitted when files are dropped onto the dropzone.                               |
+| `fileUploaded`      | `Object` | Emitted when a file successfully uploads (server-side mode).                    |
+| `fileRemoved`       | `Object` | Emitted when a File object is removed from the list.                            |
+| `previewRemoved`    | `Object` | Emitted when a preview URL is removed from the list.                            |
+| `error`             | `Object` | Emitted on validation errors or upload failures. Contains error type and files. |
 
-| Prop              | Description                                       |
-| ----------------- | ------------------------------------------------- |
-| `server-side`     | `true` or `false`.                                |
-| `upload-endpoint` | The URL endpoint where the file will be uploaded. |
-| `delete-endpoint` | The URL endpoint where the file will be deleted.  |
-| `headers`         | An object that contains any additional headers.   |
+## 🎨 Styling & Customization
 
-```vue
-<template>
-  <Vue3Dropzone
-    v-model="files"
-    :server-side="true"
-    upload-endpoint="http://your-upload-endpoint"
-    delete-endpoint="http://your-delete-endpoint"
-    :headers="headers"
-  />
-</template>
+### **CSS Variables**
 
-<script setup>
-import { ref, computed } from "vue";
+The component uses CSS custom properties for easy theming:
 
-const files = ref([]);
-const headers = computed(() => {
-  return {
-    Authorization: "Bearer " + localStorage.getItem("token"),
-  };
-});
-</script>
-```
+| Variable                         | Default         | Purpose                               |
+|----------------------------------|-----------------|---------------------------------------|
+| `--v3-dropzone--primary`         | `94, 112, 210`  | Primary color (RGB values)            |
+| `--v3-dropzone--border`          | `214, 216, 220` | Border color (RGB values)             |
+| `--v3-dropzone--description`     | `190, 191, 195` | Description text color (RGB values)   |
+| `--v3-dropzone--error`           | `255, 76, 81`   | Error state color (RGB values)        |
+| `--v3-dropzone--success`         | `36, 179, 100`  | Success state color (RGB values)      |
+| `--v3-dropzone--overlay`         | `40, 44, 53`    | Overlay background color (RGB values) |
+| `--v3-dropzone--overlay-opacity` | `0.3`           | Overlay opacity value                 |
 
-## Slots
+### **Slot Support**
 
-| Name              | data                             |
-| ----------------- | -------------------------------- |
-| `button`          | `fileInput`                      |
-| `preview`         | `data`,`formatSize`,`removeFile` |
-| `description`     | `undefined`                      |
-| `placeholder-img` | `undefined`                      |
-| `title`           | `undefined`                      |
+Override default content with custom implementations:
 
-## Customizing Slots
+| Slot              | Purpose                                           |
+|-------------------|---------------------------------------------------|
+| `placeholder-img` | Replace the default placeholder image             |
+| `title`           | Replace the default "Drop your files here" title  |
+| `button`          | Replace the default "Select File" button          |
+| `description`     | Replace the default file requirements description |
+| `preview`         | Custom preview item rendering                     |
 
-You can easily customize the component by overriding the available slots. Below is an example of how to use the different slots (button, placeholder-img, title, description) to personalize the behavior and appearance of the component.
+## 🔧 Component Methods
 
-```jsx
-<Vue3Dropzone v-model="files">
-  <template #placeholder-img>
-    <img src="your-custom-image" />
-  </template>
-  <template #title>Your Custom Title</template>
-  <template #button="{ fileInput }">
-    <button @click="fileInput?.click()" class="custom-button">Your Custom Select Button</button>
-  </template>
-  <template #description>Your Custom Description</template>
-</Vue3Dropzone>
-```
+Access these methods via template ref:
 
-## Using the Preview Slot
+| Method            | Parameters | Description                               |
+|-------------------|------------|-------------------------------------------|
+| `clearFiles()`    | None       | Remove all File objects (new uploads)     |
+| `clearPreviews()` | None       | Remove all preview URLs (existing files)  |
+| `clearAll()`      | None       | Remove both files and previews completely |
+| `clearPreview()`  | None       | Legacy method - equivalent to clearAll()  |
 
-The preview slot allows for more complex customization of how uploaded files are displayed. This slot provides three props: data, formatSize, and removeFile.
+## 🎯 Use Cases
 
-### Props
+### **Product Management**
 
-| Prop         | Description                                                         |
-| ------------ | ------------------------------------------------------------------- |
-| `data`       | - `file`: The File object.                                          |
-|              | - `id`: The unique identifier for the file.                         |
-|              | - `src`: The URL or preview of the file.                            |
-|              | - `progress`: The progress of the file upload (percentage).         |
-|              | - `status`: `pending`, `uploading`, `success`, `error`.             |
-|              | - `message`: An error or success message regarding the file upload. |
-| `formatSize` | format the file size (e.g., KB, MB, GB).                            |
-| `removeFile` | remove the uploaded file from the list.                             |
+Perfect for e-commerce platforms where users need to manage product images - showing existing images while allowing
+additions, removals, and replacements.
 
-```jsx
-<Vue3Dropzone v-model="files">
-  <template #preview="{ data, formatSize, removeFile }">
-    <div class="your-custom-preview">
-      <h2>{{ data.file.name }}</h2>
-      <span>{{ formatSize(data.file.size) }}</span>
-      <button @click="removeFile(data)">Remove File</button>
-    </div>
-  </template>
-</Vue3Dropzone>
-```
+### **Profile/Avatar Updates**
 
-## Events
+Ideal for user profile interfaces where you display current profile pictures and allow users to upload new ones.
 
-| Prop           | Data Type | Note                                                                                                                          |
-| -------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `error`        | `Array`   | Emits the error event and also provides data to know which files caused the error                                             |
-| `fileUploaded` | `Object`  | Emits when a file is uploaded, The event provides the file data so you can handle upload to the server as well as locally.    |
-| `fileRemoved`  | `Object`  | Emits when a file is removed, The event provides the file data so you can handle deletion from the server as well as locally. |
+### **Document Management**
 
-### Error Event
+Great for document upload interfaces where users can see existing documents and add new ones.
 
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @error="handleError" />
-</template>
+### **Gallery Applications**
 
-<script setup>
-function handleError(error) {
-  const { type, files } = error;
+Excellent for photo gallery management where users can view existing images and upload additional ones.
 
-  if (type === "file-too-large") {
-    console.error(
-      `The following files are too large: ${files
-        .map((file) => file.name)
-        .join(", ")}`
-    );
-  } else if (type === "invalid-file-format") {
-    console.error(
-      `The following files are not accepted formats: ${files
-        .map((file) => file.name)
-        .join(", ")}`
-    );
-  }
-}
-</script>
-```
+### **Content Management Systems**
 
-### File Uploaded Event
+Perfect for CMS interfaces where content creators need to manage media files alongside text content.
 
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @fileUploaded="handleFileUploaded" />
-</template>
+### **General Media Management Admin Panels**
 
-<script setup>
-function handleFileUploaded(file) {
-  // Do something with the uploaded file
-  console.log("File uploaded:", file);
-}
-</script>
-```
+Ideal for administrative interfaces across various platforms where administrators need to manage user-uploaded content, system assets, or shared media libraries. Works well for social platforms, educational systems, corporate portals, and any application requiring centralized media administration.
 
-### File Removed Event
+## 🚀 Features
 
-```vue
-<template>
-  <Vue3Dropzone v-model="files" @fileRemoved="handleFileRemoved" />
-</template>
+### **File Handling**
+- Automatically detects file types and displays appropriate previews
+- Handles both image files (with thumbnails) and other file types (with icons)
+- Maintains file metadata and upload status
 
-<script setup>
-function handleFileRemoved(file) {
-  // Do something with the removed file
-  console.log("File removed:", file);
-}
-</script>
-```
+### **Interaction Models**
+- Read-only preview mode for display purposes
+- Interactive preview mode for file management
+- Combined edit mode for comprehensive file management
 
-## Css variables
+### **Responsive Design**
+- Adapts to container sizes automatically
+- Supports both fixed and flexible dimensions
+- Mobile-friendly touch interactions
 
-| Name                             | Value           |
-| -------------------------------- | --------------- |
-| `--v3-dropzone--primary`         | `94, 112, 210`  |
-| `--v3-dropzone--border`          | `214, 216, 220` |
-| `--v3-dropzone--description`     | `190, 191, 195` |
-| `--v3-dropzone--overlay`         | `40, 44, 53`    |
-| `--v3-dropzone--overlay-opacity` | `0.3`           |
-| `--v3-dropzone--error`           | `255, 76, 81`   |
-| `--v3-dropzone--success`         | `36, 179, 100`  |
+### **Error Prevention**
+- File size validation before upload
+- File type validation against accepted formats
+- Clear error messaging for user guidance
 
-## Contact
-
-Emad Moghimi [jaxtheprime@gmail.com](jaxtheprime@gmail.com)
-
-Project Link: [https://github.com/JaxThePrime/vue3-dropzone](https://github.com/JaxThePrime/vue3-dropzone)
-
-</article >
+This component provides a complete solution for file management interfaces with the flexibility to adapt to various use cases and design requirements.
