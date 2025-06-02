@@ -1,27 +1,32 @@
 # Vue3 Dropzone
 
-A flexible Vue 3 dropzone component with unified preview and edit capabilities. Perfect for file uploads, image galleries, and product management interfaces.
+A flexible Vue 3 dropzone component with unified preview and edit capabilities. Perfect for file uploads, image
+galleries, and product management interfaces.
 <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
 
 ## 🎯 Key Features
 
 ### **Unified Data Handling**
+
 - **Multiple Data Sources**: Combines File objects (new uploads) with URL strings (existing files)
 - **Smart Type Detection**: Automatically handles different file types and sources
 - **Two-Way Binding**: Reactive updates for both new files and existing previews
 
 ### **Three Flexible Modes**
+
 - **Drop Mode**: Standard dropzone for new file selection
 - **Preview Mode**: Display existing files with optional interaction
 - **Edit Mode**: Combined functionality - show existing files AND allow modifications
 
 ### **File Management**
+
 - **Drag & Drop Support**: Native HTML5 drag and drop with visual feedback
 - **File Validation**: Size limits, type restrictions, and custom validation
 - **Progress Tracking**: Built-in upload progress with server-side support
 - **Error Handling**: Comprehensive error states and user feedback
 
 ### **Layout Options**
+
 - **Preview Positioning**: Display previews inside or outside the dropzone
 - **Responsive Design**: Adapts to different screen sizes and containers
 - **Customizable Styling**: CSS variables for easy theming
@@ -41,13 +46,13 @@ A flexible Vue 3 dropzone component with unified preview and edit capabilities. 
 
 ### **File Selection & Strategy**
 
-| Prop                   | Type      | Default     | Description                                                                                           |
-|------------------------|-----------|-------------|-------------------------------------------------------------------------------------------------------|
-| `selectFileStrategy`   | `String`  | `"replace"` | How new files interact with existing ones: `"replace"` (clear existing), `"merge"` (add to existing). |
-| `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection when in preview mode. When false, preview mode is read-only.                     |
-| `maxFiles`             | `Number`  | `5`         | Maximum number of files that can be selected at once.                                                 |
-| `maxFileSize`          | `Number`  | `5`         | Maximum file size allowed in megabytes (MB).                                                          |
-| `accept`               | `String`  | `undefined` | Comma-separated list of allowed file types (MIME types). Example: "image/*,application/pdf".          |
+| Prop                   | Type      | Default     | Description                                                                                                                                                                                                                                             |
+|------------------------|-----------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `selectFileStrategy`   | `String`  | `"replace"` | How new files interact with existing ones: `"replace"` (clear existing), `"merge"` (add to existing).                                                                                                                                                   |
+| `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection in preview mode. When true, clicking on empty areas in the preview container triggers file selection, while clicks on images and preview items are prevented to avoid accidental selection. When false, preview mode is read-only. |
+| `maxFiles`             | `Number`  | `5`         | Maximum number of files that can be selected at once.                                                                                                                                                                                                   |
+| `maxFileSize`          | `Number`  | `5`         | Maximum file size allowed in megabytes (MB).                                                                                                                                                                                                            |
+| `accept`               | `String`  | `undefined` | Comma-separated list of allowed file types (MIME types). Example: "image/*,application/pdf".                                                                                                                                                            |
 
 ### **Visual Layout & Positioning**
 
@@ -153,28 +158,39 @@ Perfect for CMS interfaces where content creators need to manage media files alo
 
 ### **General Media Management Admin Panels**
 
-Ideal for administrative interfaces across various platforms where administrators need to manage user-uploaded content, system assets, or shared media libraries. Works well for social platforms, educational systems, corporate portals, and any application requiring centralized media administration.
+Ideal for administrative interfaces across various platforms where administrators need to manage user-uploaded content,
+system assets, or shared media libraries. Works well for social platforms, educational systems, corporate portals, and
+any application requiring centralized media administration.
 
 ## 🚀 Features
 
 ### **File Handling**
+
 - Automatically detects file types and displays appropriate previews
 - Handles both image files (with thumbnails) and other file types (with icons)
 - Maintains file metadata and upload status
 
 ### **Interaction Models**
+
 - Read-only preview mode for display purposes
 - Interactive preview mode for file management
 - Combined edit mode for comprehensive file management
+- Smart click handling:
+    - Click on empty preview container areas to select new files
+    - Click prevention on images and preview items to avoid accidental file selection
+    - Dedicated remove buttons for each preview item
 
 ### **Responsive Design**
+
 - Adapts to container sizes automatically
 - Supports both fixed and flexible dimensions
 - Mobile-friendly touch interactions
 
 ### **Error Prevention**
+
 - File size validation before upload
 - File type validation against accepted formats
 - Clear error messaging for user guidance
 
-This component provides a complete solution for file management interfaces with the flexibility to adapt to various use cases and design requirements.
+This component provides a complete solution for file management interfaces with the flexibility to adapt to various use
+cases and design requirements.

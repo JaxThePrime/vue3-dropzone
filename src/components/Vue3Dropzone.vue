@@ -63,7 +63,7 @@
           v-if="previewPosition === 'inside' && unifiedItems.length"
           v-bind="previewProps"
           @removeFile="removeFile"
-          @click="fileInputAllowed ? openSelectFile : undefined"
+          @click="fileInputAllowed && openSelectFile($event)"
           @mouseover="fileInputAllowed ? hover : undefined"
           @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
@@ -79,14 +79,13 @@
         @dragover.prevent
         v-if="disabled"
     ></div>
-
     <!-- Files previews outside -->
     <div class="mt-5"
          v-if="previewPosition === 'outside' && unifiedItems.length">
       <PreviewSlot 
         v-bind="previewProps" 
         @removeFile="removeFile"
-        @click="fileInputAllowed ? openSelectFile : undefined"
+        @click="fileInputAllowed && openSelectFile($event)"
         @mouseover="fileInputAllowed ? hover : undefined"
         @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
@@ -466,17 +465,16 @@ const blurDrop = () => {
   active.value = false;
 };
 
+const testclick = () => {
+  console.log('testclick');
+}
+
 // Opens os selecting file window
 const openSelectFile = (e) => {
+  console.log('asd');
+  
   if (fileInputAllowed.value) {
-    // Allow clicks on the dropzone wrapper itself or preview containers
-    if (
-      e.target.id === "dropzoneWrapper" || 
-      e.target.classList.contains('preview-container') ||
-      e.currentTarget.classList.contains('preview-container')
-    ) {
-      fileInput.value.click();
-    }
+    fileInput.value.click();
   } else {
     e.preventDefault();
   }

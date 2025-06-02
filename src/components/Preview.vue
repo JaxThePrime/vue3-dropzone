@@ -2,6 +2,7 @@
   <div
       class="preview-container"
       :class="previewWrapperClasses"
+      @click="$emit('click', $event)"
   >
     <slot
         name="preview"
@@ -21,13 +22,14 @@
           width: `${imgWidth} !important`,
           height: `${imgHeight} !important`,
         }"
-        @click.stop
+          @click.stop
       >
         <!-- For actual File objects -->
         <img
             :src="item.src"
             :alt="item.name || (item.file && item.file.name)"
             v-if="item.type === 'file' && item.file && item.file.type && item.file.type.includes('image/')"
+            @click.stop
         />
         
         <!-- For URL previews -->
@@ -35,17 +37,19 @@
             :src="item.src"
             :alt="item.name"
             v-if="item.type === 'url'"
+            @click.stop
         />
         
         <!-- File type icon for non-images -->
         <Icon
             :name="item.file ? item.file.name.split('.').pop() : 'file'"
             v-if="item.type === 'file' && item.file && item.file.type && (!item.file.type.includes('image/') && !item.file.type.includes('video/'))"
+            @click.stop
         />
         
         <!-- File details overlay -->
-        <div class="img-details" v-if="allowSelectOnPreview && mode !== 'preview'">
-          <button class="img-remove" @click="removeFile(item)">
+        <div class="img-details" v-if="allowSelectOnPreview && mode !== 'preview'" @click.stop>
+          <button class="img-remove" @click.stop="removeFile(item)">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -117,7 +121,7 @@ const props = defineProps({
   removeFileBuiltIn: Function
 });
 
-const emit = defineEmits(["removeFile"]);
+const emit = defineEmits(["removeFile", "click"]);
 
 // Formats file size
 const formatSize = (size) => {
