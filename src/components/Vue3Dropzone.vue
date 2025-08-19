@@ -179,6 +179,10 @@ const props = defineProps({
   allowSelectOnPreview: {
     type: Boolean,
     default: false
+  },
+  ignoreOriginalPreviews: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -187,30 +191,44 @@ const unifiedItems = computed(() => {
   const items = [];
   
   // Add preview URLs first (existing images)
-  if (props.previews && props.previews.length) {
+  const hasPreviewModeFiles = props.mode === "preview" && props.allowSelectOnPreview && files.value && files.value.length > 0;
+  
+  // Show original previews if:
+  // 1. Merge strategy is used (always show originals)
+  // 2. Replace strategy but ignoreOriginalPreviews is false and no new files selected
+  // 3. Not in preview mode or no files selected
+  const shouldShowOriginalPreviews = props.selectFileStrategy === "merge" || 
+    (props.selectFileStrategy === "replace" && !hasPreviewModeFiles && (!previewsReplaced.value || !props.ignoreOriginalPreviews)) ||
+    (props.mode !== "preview" || !props.allowSelectOnPreview);
+  
+  if (props.previews && Array.isArray(props.previews) && props.previews.length > 0 && shouldShowOriginalPreviews) {
     props.previews.forEach((url, index) => {
-      items.push({
-        id: `preview-${index}`,
-        src: url,
-        type: 'url',
-        isPreview: true,
-        name: `Image ${index + 1}`,
-        size: 0,
-        progress: 100,
-        status: 'success',
-        message: null
-      });
+      if (url && typeof url === 'string') {
+        items.push({
+          id: `preview-${index}`,
+          src: url,
+          type: 'url',
+          isPreview: true,
+          name: `Image ${index + 1}`,
+          size: 0, // URL previews don't have size info
+          progress: 100,
+          status: 'success',
+          message: null
+        });
+      }
     });
   }
   
   // Add actual file objects
-  if (files.value && files.value.length) {
+  if (files.value && Array.isArray(files.value) && files.value.length > 0) {
     files.value.forEach(fileItem => {
-      items.push({
-        ...fileItem,
-        type: 'file',
-        isPreview: false
-      });
+      if (fileItem && typeof fileItem === 'object') {
+        items.push({
+          ...fileItem,
+          type: fileItem.isPreview ? 'url' : 'file', // Preview mode files should be treated as URL type for display
+          isPreview: Boolean(fileItem.isPreview)
+        });
+      }
     });
   }
   
@@ -243,6 +261,7 @@ const fileInput = ref(null);
 const files = ref([]);
 const active = ref(false);
 const dropzoneWrapper = ref(null);
+const previewsReplaced = ref(false); // Track if previews have been replaced
 const fileInputId = computed(() => {
   if (props.fileInputId) return props.fileInputId;
   return generateFileId();
@@ -292,15 +311,50 @@ const inputFiles = (e) => {
     // Use selectFileStrategy for all modes
     const strategy = props.selectFileStrategy;
 
-    if (strategy === "replace") {
-      files.value = allFiles.map(processFile);
-      // In edit mode, also clear previews if replacing
-      if (props.mode === "edit") {
-        emit("update:previews", []);
+    // Handle preview mode with allowSelectOnPreview differently
+    if (props.mode === "preview" && props.allowSelectOnPreview) {
+      // In preview mode, store files with metadata but treat them as previews
+      const processFile = (file) => {
+        if (!file || !(file instanceof File)) {
+          return null;
+        }
+        return {
+          file: file,
+          id: generateFileId(),
+          src: URL.createObjectURL(file),
+          progress: 100,
+          status: "success",
+          message: null,
+          name: file.name || 'Unknown file',
+          size: file.size || 0,
+          type: 'file',
+          isPreview: true
+        };
+      };
+      
+      const processedFiles = allFiles.map(processFile).filter(Boolean);
+      
+      if (strategy === "replace") {
+        files.value = processedFiles;
+        // Clear original preview URLs when replacing (handled internally)
+        previewsReplaced.value = true;
       }
-    }
-    if (strategy === "merge") {
-      files.value = [...files.value, ...allFiles.map(processFile)];
+      if (strategy === "merge") {
+        files.value = [...files.value, ...processedFiles];
+        // Keep original preview URLs when merging
+      }
+    } else {
+      // Normal mode - add to files array
+      if (strategy === "replace") {
+        files.value = allFiles.map(processFile);
+        // In edit mode, also clear previews if replacing
+        if (props.mode === "edit") {
+          emit("update:previews", []);
+        }
+      }
+      if (strategy === "merge") {
+        files.value = [...files.value, ...allFiles.map(processFile)];
+      }
     }
   }
 
@@ -320,12 +374,12 @@ const inputFiles = (e) => {
   }
 
   files.value
-      .filter((fileItem) => fileItem.status !== "success")
+      .filter((fileItem) => fileItem.status !== "success" && !fileItem.isPreview)
       .forEach((fileItem) => {
-        // Upload files to server
-        if (props.serverSide) {
+        // Upload files to server (only for non-preview modes)
+        if (props.serverSide && props.mode !== "preview") {
           uploadFileToServer(fileItem);
-        } else {
+        } else if (props.mode !== "preview") {
           fileItem.progress = 100;
           fileItem.status = "success";
           fileItem.message = "File uploaded successfully";
@@ -407,15 +461,24 @@ const drop = (e) => {
 
 // Enhanced removeFile to handle both types
 const removeFile = (item) => {
-  if (item.type === 'url' || item.isPreview) {
-    // Remove from previews array
-    const currentPreviews = [...props.previews];
+  if (!item || !item.id) {
+    return;
+  }
+  
+  if (item.type === 'url' && !item.isPreview) {
+    // Remove from previews array (original URL previews)
+    const currentPreviews = [...(props.previews || [])];
     const previewIndex = parseInt(item.id.replace('preview-', ''));
-    currentPreviews.splice(previewIndex, 1);
-    emit("update:previews", currentPreviews);
-    emit("previewRemoved", item);
+    if (!isNaN(previewIndex) && previewIndex >= 0 && previewIndex < currentPreviews.length) {
+      currentPreviews.splice(previewIndex, 1);
+      emit("update:previews", currentPreviews);
+      emit("previewRemoved", item);
+    }
+  } else if (item.isPreview) {
+    // Remove preview mode files from files array
+    removeFileFromList(item);
   } else {
-    // Handle file removal
+    // Handle regular file removal
     if (props.serverSide) {
       removeFileFromServer(item);
     } else {
@@ -449,8 +512,16 @@ const removeFileFromServer = (item) => {
 };
 
 const removeFileFromList = (item) => {
-  files.value = files.value.filter((file) => file.id !== item.id);
-  fileInput.value.value = "";
+  if (!item || !item.id) {
+    return;
+  }
+  
+  files.value = files.value.filter((file) => file && file.id !== item.id);
+  
+  if (fileInput.value) {
+    fileInput.value.value = "";
+  }
+  
   emit("fileRemoved", item);
   emit("update:modelValue", files.value);
 };
@@ -465,14 +536,8 @@ const blurDrop = () => {
   active.value = false;
 };
 
-const testclick = () => {
-  console.log('testclick');
-}
-
 // Opens os selecting file window
 const openSelectFile = (e) => {
-  console.log('asd');
-  
   if (fileInputAllowed.value) {
     fileInput.value.click();
   } else {
@@ -488,6 +553,13 @@ const handleFileError = (type, files) => {
 watchEffect(() => {
   if (files.value && files.value.length) {
     emit("update:modelValue", files.value);
+  }
+});
+
+// Reset previewsReplaced when ignoreOriginalPreviews is false and no files are selected
+watchEffect(() => {
+  if (props.ignoreOriginalPreviews === false && (!files.value || !Array.isArray(files.value) || files.value.length === 0)) {
+    previewsReplaced.value = false;
   }
 });
 

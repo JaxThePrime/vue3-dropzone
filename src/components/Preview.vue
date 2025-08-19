@@ -48,7 +48,7 @@
         />
         
         <!-- File details overlay -->
-        <div class="img-details" v-if="allowSelectOnPreview && mode !== 'preview'" @click.stop>
+        <div class="img-details" v-if="allowSelectOnPreview && mode !== 'preview'">
           <button class="img-remove" @click.stop="removeFile(item)">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -69,6 +69,30 @@
           </button>
           <h2 v-if="item.name || (item.file && item.file.name)">{{ item.name || item.file.name }}</h2>
           <span v-if="item.size || (item.file && item.file.size)">{{ formatSize(item.size || item.file.size) }}</span>
+        </div>
+        
+        <!-- Preview details overlay (no remove button for URL previews) -->
+        <div class="img-details" v-if="item.type === 'url' && allowSelectOnPreview">
+          <button class="img-remove" v-if="item.isPreview && item.file" @click.stop="removeFile(item)">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M18 6l-12 12"/>
+              <path d="M6 6l12 12"/>
+            </svg>
+          </button>
+          <h2 v-if="item.name">{{ item.name }}</h2>
+          <span v-if="item.size">{{ formatSize(item.size) }}</span>
         </div>
         
         <!-- Progress bar for file uploads -->

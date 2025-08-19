@@ -2,7 +2,7 @@
 
 A flexible Vue 3 dropzone component with unified preview and edit capabilities. Perfect for file uploads, image
 galleries, and product management interfaces.
-<a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
+    <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
 
 ## 🎯 Key Features
 
@@ -50,6 +50,7 @@ galleries, and product management interfaces.
 |------------------------|-----------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `selectFileStrategy`   | `String`  | `"replace"` | How new files interact with existing ones: `"replace"` (clear existing), `"merge"` (add to existing).                                                                                                                                                   |
 | `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection in preview mode. When true, clicking on empty areas in the preview container triggers file selection, while clicks on images and preview items are prevented to avoid accidental selection. When false, preview mode is read-only. |
+| `ignoreOriginalPreviews` | `Boolean` | `false`     | When true and using replace strategy in preview mode, original preview URLs are permanently hidden after new files are selected, even if all new files are removed. When false, original previews reappear when new files are removed. |
 | `maxFiles`             | `Number`  | `5`         | Maximum number of files that can be selected at once.                                                                                                                                                                                                   |
 | `maxFileSize`          | `Number`  | `5`         | Maximum file size allowed in megabytes (MB).                                                                                                                                                                                                            |
 | `accept`               | `String`  | `undefined` | Comma-separated list of allowed file types (MIME types). Example: "image/*,application/pdf".                                                                                                                                                            |
