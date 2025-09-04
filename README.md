@@ -15,8 +15,8 @@ galleries, and product management interfaces.
 ### **Three Flexible Modes**
 
 - **Drop Mode**: Standard dropzone for new file selection
-- **Preview Mode**: Display existing files with optional interaction
-- **Edit Mode**: Combined functionality - show existing files AND allow modifications
+- **Preview Mode**: Display existing files with optional interaction (can be enhanced with `allowSelectOnPreview`)
+- **Edit Mode**: Combined functionality - show existing files AND allow full modification capabilities (add, remove, replace)
 
 ### **File Management**
 
@@ -40,7 +40,7 @@ galleries, and product management interfaces.
 |--------------|-----------|----------|--------------------------------------------------------------------------------------------------------------------|
 | `modelValue` | `Array`   | `[]`     | Array of File objects representing newly selected files. Two-way binding with v-model.                             |
 | `previews`   | `Array`   | `[]`     | Array of URL strings for existing files/images. Two-way binding with v-model:previews.                             |
-| `mode`       | `String`  | `"drop"` | Component behavior mode: `"drop"` (new files only), `"preview"` (display only), `"edit"` (combined functionality). |
+| `mode`       | `String`  | `"drop"` | Component behavior mode: `"drop"` (new files only), `"preview"` (display only, can be enhanced with `allowSelectOnPreview`), `"edit"` (combined functionality with full file management capabilities). Edit mode automatically enables file selection and removal, and has special behaviors like clearing previews when using replace strategy. |
 | `multiple`   | `Boolean` | `false`  | Allow selection of multiple files simultaneously.                                                                  |
 | `disabled`   | `Boolean` | `false`  | Completely disable all interactions with the dropzone.                                                             |
 
@@ -49,7 +49,7 @@ galleries, and product management interfaces.
 | Prop                   | Type      | Default     | Description                                                                                                                                                                                                                                             |
 |------------------------|-----------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `selectFileStrategy`   | `String`  | `"replace"` | How new files interact with existing ones: `"replace"` (clear existing), `"merge"` (add to existing).                                                                                                                                                   |
-| `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection in preview mode. When true, clicking on empty areas in the preview container triggers file selection, while clicks on images and preview items are prevented to avoid accidental selection. When false, preview mode is read-only. |
+| `allowSelectOnPreview` | `Boolean` | `false`     | Allow file selection and removal in preview mode. When true, clicking on empty areas in the preview container triggers file selection, while clicks on images and preview items are prevented to avoid accidental selection. This adds limited interactivity to preview mode without enabling all edit mode features. When false, preview mode is read-only. Note: For full editing capabilities, use `mode="edit"` instead. |
 | `ignoreOriginalPreviews` | `Boolean` | `false`     | When true and using replace strategy in preview mode, original preview URLs are permanently hidden after new files are selected, even if all new files are removed. When false, original previews reappear when new files are removed. |
 | `maxFiles`             | `Number`  | `5`         | Maximum number of files that can be selected at once.                                                                                                                                                                                                   |
 | `maxFileSize`          | `Number`  | `5`         | Maximum file size allowed in megabytes (MB).                                                                                                                                                                                                            |

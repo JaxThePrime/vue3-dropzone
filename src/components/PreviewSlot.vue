@@ -25,6 +25,6 @@ const emit = defineEmits(['removeFile', 'click', 'mouseover', 'mouseleave']);
 
 const previewProps = computed(() => ({
   ...props,
-  onRemoveFile: (file) => emit('removeFile', file)
+  removeFileBuiltIn: (file) => emit('removeFile', file)
 }));
 </script>

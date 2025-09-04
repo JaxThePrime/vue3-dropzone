@@ -85,7 +85,6 @@
       <PreviewSlot 
         v-bind="previewProps" 
         @removeFile="removeFile"
-        @click="fileInputAllowed && openSelectFile($event)"
         @mouseover="fileInputAllowed ? hover : undefined"
         @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
@@ -465,7 +464,7 @@ const removeFile = (item) => {
     return;
   }
   
-  if (item.type === 'url' && !item.isPreview) {
+  if (item.type === 'url') {
     // Remove from previews array (original URL previews)
     const currentPreviews = [...(props.previews || [])];
     const previewIndex = parseInt(item.id.replace('preview-', ''));
