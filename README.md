@@ -19,15 +19,15 @@ yarn add @jaxtheprime/vue3-dropzone
 ```js
 // In your main.js
 import { createApp } from 'vue'
-import Vue3Dropzone from '@jaxtheprime/vue3-dropzone'
-import '@jaxtheprime/vue3-dropzone/dist/style.css' // Don't forget to import the styles!
+import vue3Dropzone from '@jaxtheprime/vue3-dropzone'
+import "@jaxtheprime/vue3-dropzone/dist/style.css" // Don't forget to import the styles!
 
 const app = createApp(App)
 app.component('Vue3Dropzone', Vue3Dropzone)
 
 // OR in your component file (local registration)
-import { Vue3Dropzone } from '@jaxtheprime/vue3-dropzone'
-import '@jaxtheprime/vue3-dropzone/dist/style.css'
+import vue3Dropzone from '@jaxtheprime/vue3-dropzone'
+import "@jaxtheprime/vue3-dropzone/dist/style.css"
 ```
 
 ### Minimal Example
