@@ -4,6 +4,75 @@ A flexible Vue 3 dropzone component with unified preview and edit capabilities. 
 galleries, and product management interfaces.
     <a href="https://vue-dropzone-preview.vercel.app/"><strong>Demo</strong></a>
 
+## 🚀 Getting Started
+
+### Installation
+
+```bash
+npm install @jaxtheprime/vue3-dropzone
+# or
+yarn add @jaxtheprime/vue3-dropzone
+```
+
+### Basic Usage
+
+```js
+// In your main.js
+import { createApp } from 'vue'
+import Vue3Dropzone from '@jaxtheprime/vue3-dropzone'
+import '@jaxtheprime/vue3-dropzone/dist/style.css' // Don't forget to import the styles!
+
+const app = createApp(App)
+app.component('Vue3Dropzone', Vue3Dropzone)
+
+// OR in your component file (local registration)
+import { Vue3Dropzone } from '@jaxtheprime/vue3-dropzone'
+import '@jaxtheprime/vue3-dropzone/dist/style.css'
+```
+
+### Minimal Example
+
+```vue
+<template>
+  <Vue3Dropzone v-model="files" />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const files = ref([])
+</script>
+```
+
+### Complete Example
+
+```vue
+<template>
+  <Vue3Dropzone 
+    v-model="files" 
+    multiple
+    width="100%" 
+    height="400px" 
+    imgWidth="45%" 
+    imgHeight="300px"
+    :maxFileSize="10"
+    :maxFiles="2"
+    :state="state"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const files = ref([])
+const state = ref('indeterminate') // Can be 'indeterminate', 'success', or 'error'
+</script>
+```
+
+### Version Support
+- Vue.js 3.x
+- Modern browsers with ES6 support
+
 ## 🎯 Key Features
 
 ### **Unified Data Handling**
