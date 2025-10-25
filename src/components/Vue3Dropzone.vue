@@ -17,7 +17,7 @@
           state ? `dropzone-wrapper--${state}` : '',
         ]"
         ref="dropzoneWrapper"
-        @click.self="openSelectFile"
+        @click="openSelectFile"
         id="dropzoneWrapper"
     >
       <!-- Input -->
@@ -43,6 +43,7 @@
         </slot>
         <slot name="button" :fileInput="fileInput">
           <button
+              type="button"
               @click="fileInput?.click()"
               v-if="showSelectButton"
               class="select-file"
@@ -82,11 +83,11 @@
     <!-- Files previews outside -->
     <div class="mt-5"
          v-if="previewPosition === 'outside' && unifiedItems.length">
-      <PreviewSlot 
-        v-bind="previewProps" 
-        @removeFile="removeFile"
-        @mouseover="fileInputAllowed ? hover : undefined"
-        @mouseleave="fileInputAllowed ? blurDrop : undefined"
+      <PreviewSlot
+          v-bind="previewProps"
+          @removeFile="removeFile"
+          @mouseover="fileInputAllowed ? hover : undefined"
+          @mouseleave="fileInputAllowed ? blurDrop : undefined"
       >
         <template #preview="previewProps">
           <slot name="preview" v-bind="previewProps"></slot>
@@ -188,18 +189,18 @@ const props = defineProps({
 // Unified data structure that combines both File objects and URL previews
 const unifiedItems = computed(() => {
   const items = [];
-  
+
   // Add preview URLs first (existing images)
   const hasPreviewModeFiles = props.mode === "preview" && props.allowSelectOnPreview && files.value && files.value.length > 0;
-  
+
   // Show original previews if:
   // 1. Merge strategy is used (always show originals)
   // 2. Replace strategy but ignoreOriginalPreviews is false and no new files selected
   // 3. Not in preview mode or no files selected
-  const shouldShowOriginalPreviews = props.selectFileStrategy === "merge" || 
-    (props.selectFileStrategy === "replace" && !hasPreviewModeFiles && (!previewsReplaced.value || !props.ignoreOriginalPreviews)) ||
-    (props.mode !== "preview" || !props.allowSelectOnPreview);
-  
+  const shouldShowOriginalPreviews = props.selectFileStrategy === "merge" ||
+      (props.selectFileStrategy === "replace" && !hasPreviewModeFiles && (!previewsReplaced.value || !props.ignoreOriginalPreviews)) ||
+      (props.mode !== "preview" || !props.allowSelectOnPreview);
+
   if (props.previews && Array.isArray(props.previews) && props.previews.length > 0 && shouldShowOriginalPreviews) {
     props.previews.forEach((url, index) => {
       if (url && typeof url === 'string') {
@@ -217,7 +218,7 @@ const unifiedItems = computed(() => {
       }
     });
   }
-  
+
   // Add actual file objects
   if (files.value && Array.isArray(files.value) && files.value.length > 0) {
     files.value.forEach(fileItem => {
@@ -230,7 +231,7 @@ const unifiedItems = computed(() => {
       }
     });
   }
-  
+
   return items;
 });
 
@@ -330,9 +331,9 @@ const inputFiles = (e) => {
           isPreview: true
         };
       };
-      
+
       const processedFiles = allFiles.map(processFile).filter(Boolean);
-      
+
       if (strategy === "replace") {
         files.value = processedFiles;
         // Clear original preview URLs when replacing (handled internally)
@@ -463,7 +464,7 @@ const removeFile = (item) => {
   if (!item || !item.id) {
     return;
   }
-  
+
   if (item.type === 'url') {
     // Remove from previews array (original URL previews)
     const currentPreviews = [...(props.previews || [])];
@@ -514,13 +515,13 @@ const removeFileFromList = (item) => {
   if (!item || !item.id) {
     return;
   }
-  
+
   files.value = files.value.filter((file) => file && file.id !== item.id);
-  
+
   if (fileInput.value) {
     fileInput.value.value = "";
   }
-  
+
   emit("fileRemoved", item);
   emit("update:modelValue", files.value);
 };

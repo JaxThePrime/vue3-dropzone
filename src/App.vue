@@ -1,13 +1,7 @@
 <template>
-  <div class="app">
-    <Vue3Dropzone v-model="sampleFiles"
-                  v-model:previews="previews"
-                  previewPosition="outside"
-                  mode="edit"
-                  multiple
-                  imgWidth="150px"
-                  imgHeight="150px"/>
-  </div>
+  <form class="app">
+    <Vue3Dropzone v-model="sampleFiles"/>
+  </form>
 </template>
 
 <script setup>
